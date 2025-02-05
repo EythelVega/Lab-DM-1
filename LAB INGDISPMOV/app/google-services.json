@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "896598944437",
+    "project_id": "lab-dispositivos-moviles-bav",
+    "storage_bucket": "lab-dispositivos-moviles-bav.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896598944437:android:4b037967bb560a8201ecfc",
+        "android_client_info": {
+          "package_name": "com.bav.labdispositivosmovilesbav"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZuoNzHYNyFVAuuBAX_5nqrkxQsS73sLA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

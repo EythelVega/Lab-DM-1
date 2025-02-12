@@ -1,23 +1,50 @@
 package com.bav.labdispositivosmovilesbav
 // Importaciones necesarias para que funcione el registro
 import android.util.Log
+import android.util.Patterns
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -26,17 +53,20 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import android.util.Patterns
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.bav.labdispositivosmovilesbav.auth.RegisterViewModel
 import com.bav.labdispositivosmovilesbav.auth.RegisterUiState
+import com.bav.labdispositivosmovilesbav.auth.RegisterViewModel
 
 @Composable
+
 fun RegisterScreen(
     viewModel: RegisterViewModel = viewModel(), // Maneja la lógica del registro
     onRegisterSuccess: () -> Unit  // Maneja el éxito del registro
 ) {
 // Para almacenar los datos del usuraio
+    var confirmPassword by remember { mutableStateOf("") }
+    var passwordsMatch by remember { mutableStateOf(true) } // Controla si las contraseñas coinciden
+
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -165,6 +195,7 @@ fun RegisterScreen(
                                 tint = Color.White
                             )
                         },
+
                         trailingIcon = {
                             IconButton(
                                 onClick = { passwordVisible = !passwordVisible }
@@ -182,6 +213,10 @@ fun RegisterScreen(
                                 )
                             }
                         },
+
+
+
+
                         visualTransformation = if (passwordVisible)
                             VisualTransformation.None
                         else
@@ -197,9 +232,75 @@ fun RegisterScreen(
                             unfocusedTextColor = Color.White
                         )
                     )
+                    OutlinedTextField(
+                        value = confirmPassword,
+                        onValueChange = {
+                            confirmPassword = it
+                            passwordsMatch = (password == it) // Usa 'it' para comparar con 'password'
+                        },
+                        label = { Text("Confirmar Contraseña", color = Color.White) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Lock,
+                                contentDescription = "Confirmar contraseña",
+                                tint = Color.White
+                            )
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                Icon(
+                                    imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                    contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña",
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        enabled = uiState !is RegisterUiState.Loading,
+                        isError = !passwordsMatch, // Resalta el campo si no coinciden
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color.White,
+                            unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White
+                        )
+                    )
+                    if (!passwordsMatch) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp, bottom = 16.dp) // Separa del botón de registro
+                                .border(1.dp, Color.Red, shape = RoundedCornerShape(8.dp)) // Borde rojo sutil
+                                .background(Color(0xFFFFEBEE), shape = RoundedCornerShape(8.dp)) // Fondo rosado claro
+                                .padding(12.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ErrorOutline, // Ícono menos agresivo
+                                    contentDescription = "Error",
+                                    tint = Color.Red,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Las contraseñas no coinciden. Inténtalo de nuevo.",
+                                    color = Color(0xFFD32F2F), // Rojo elegante
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
 
-                    // Botón de Registro
-                    Button(
+
+// Muestra mensaje de error si no coinciden
+
+                    /*Button(
                         onClick = {
                             Log.d("RegisterScreen", "Iniciando registro con email: $email")
                             viewModel.register(name, email, password)
@@ -210,6 +311,44 @@ fun RegisterScreen(
                         enabled = name.isNotBlank() &&
                                 email.isNotBlank() &&
                                 password.isNotBlank() &&
+                                confirmPassword.isNotBlank() &&
+                                passwordsMatch &&
+                                uiState !is RegisterUiState.Loading,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF2196F3),
+                            disabledContainerColor = Color.Gray
+                        ),
+                        shape = RoundedCornerShape(25.dp)
+                    ) {
+                        if (uiState is RegisterUiState.Loading) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            Text("REGISTRARSE", fontSize = 16.sp)
+                        }
+                    }
+                    */
+                    // Botón de Registro
+                    Button(
+                        onClick = {
+                            if (password != confirmPassword) {
+                                passwordsMatch = false // Actualiza el estado para marcar error
+                            } else {
+                                passwordsMatch = true
+                                Log.d("RegisterScreen", "Iniciando registro con email: $email")
+                                viewModel.register(name, email, password)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        enabled = name.isNotBlank() &&
+                                email.isNotBlank() &&
+                                password.isNotBlank() &&
+                                confirmPassword.isNotBlank() &&
+                                passwordsMatch && // Se debe cumplir que las contraseñas coincidan
                                 uiState !is RegisterUiState.Loading,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF2196F3),
@@ -287,4 +426,18 @@ private fun isFormValid(name: String, email: String, password: String): Boolean 
     return validateName(name).isEmpty() &&
             validateEmail(email).isEmpty() &&
             validatePassword(password).isEmpty()
+}
+
+private fun validateConfirmPassword(password: String, confirmPassword: String): String {
+    return when {
+        confirmPassword.isEmpty() -> "Debe confirmar la contraseña"
+        confirmPassword != password -> "Las contraseñas no coinciden"
+        else -> ""
+    }
+}
+private fun isFormValid(name: String, email: String, password: String, confirmPassword: String): Boolean {
+    return validateName(name).isEmpty() &&
+            validateEmail(email).isEmpty() &&
+            validatePassword(password).isEmpty() &&
+            validateConfirmPassword(password, confirmPassword).isEmpty()
 }

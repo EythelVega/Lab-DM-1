@@ -44,6 +44,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.navigation:navigation-runtime-android:2.9.0-alpha06")
     val composeBomVersion = "2024.01.00"
     val activityComposeVersion = "1.8.2"
     val lifecycleVersion = "2.7.0"
@@ -88,4 +89,6 @@ dependencies {
 
     // Agregar esta dependencia para los íconos
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
+
+    implementation ("androidx.navigation:navigation-compose:2.7.4")
 }

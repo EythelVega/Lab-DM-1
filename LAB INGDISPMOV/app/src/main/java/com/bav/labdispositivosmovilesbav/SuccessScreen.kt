@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
@@ -68,10 +69,11 @@ fun SuccessScreen(
 
             // Mensaje de éxito
             Text(
-                text = "¡Registro Exitoso!",
-                fontSize = 28.sp,
+                text = "¡Registro Exitoso!\nPor favor, verifica tu correo electrónico para activar tu cuenta.",
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = Color.White,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(16.dp))

@@ -35,11 +35,20 @@ class AuthRepository {
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
             
             authResult.user?.let { user ->
-                Log.d("AuthRepository", "Usuario creado exitosamente: ${user.uid}")
+                // Enviar correo de verificación
+                try {
+                    user.sendEmailVerification().await()
+                    Log.d("AuthRepository", "Correo de verificación enviado a: ${user.email}")
+                } catch (e: Exception) {
+                    Log.e("AuthRepository", "Error al enviar correo de verificación: ${e.message}")
+                    // Continuamos con el registro aunque falle el envío del correo
+                }
+                
                 // Guardar información adicional en Firestore
                 val userInfo = hashMapOf(
                     "name" to name,
-                    "email" to email
+                    "email" to email,
+                    "emailVerified" to false
                 )
                 
                 try {
@@ -67,6 +76,31 @@ class AuthRepository {
                 e.message?.contains("WEAK_PASSWORD") == true ->
                     Result.failure(Exception("La contraseña es muy débil"))
                 else -> Result.failure(Exception("Error en el registro: ${e.message}"))
+            }
+        }
+    }
+
+    suspend fun loginUser(email: String, password: String): Result<FirebaseUser> {
+        return try {
+            Log.d("AuthRepository", "Iniciando sesión: $email")
+            val authResult = auth.signInWithEmailAndPassword(email, password).await()
+            
+            authResult.user?.let { user ->
+                if (!user.isEmailVerified) {
+                    return Result.failure(Exception("Por favor verifica tu correo electrónico antes de iniciar sesión"))
+                }
+                Log.d("AuthRepository", "Inicio de sesión exitoso: ${user.uid}")
+                Result.success(user)
+            } ?: Result.failure(Exception("Error: Usuario no encontrado"))
+            
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Error en inicio de sesión: ${e.message}")
+            when {
+                e.message?.contains("INVALID_LOGIN_CREDENTIALS") == true -> 
+                    Result.failure(Exception("Correo o contraseña incorrectos"))
+                e.message?.contains("INVALID_EMAIL") == true ->
+                    Result.failure(Exception("El formato del correo electrónico no es válido"))
+                else -> Result.failure(Exception("Error en el inicio de sesión: ${e.message}"))
             }
         }
     }

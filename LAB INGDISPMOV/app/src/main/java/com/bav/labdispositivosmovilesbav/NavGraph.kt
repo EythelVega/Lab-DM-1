@@ -46,10 +46,21 @@ fun NavGraph(startDestination: String = "splash") {
         // Pantalla de éxito
         composable("success") {
             SuccessScreen {
-                navController.navigate("register") {
+                navController.navigate("login") {
                     popUpTo("success") { inclusive = true }
                 }
             }
+        }
+
+        // Pantalla principal (home)
+        composable("home") {
+            HomeScreen(
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

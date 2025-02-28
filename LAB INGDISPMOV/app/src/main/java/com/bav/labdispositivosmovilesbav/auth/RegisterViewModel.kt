@@ -28,7 +28,7 @@ class RegisterViewModel : ViewModel() {
                 result.fold(
                     onSuccess = { 
                         Log.d("RegisterViewModel", "Registro exitoso")
-                        _uiState.value = RegisterUiState.Success 
+                        _uiState.value = RegisterUiState.Success(true) 
                     },
                     onFailure = { 
                         Log.e("RegisterViewModel", "Error en registro: ${it.message}")
@@ -50,6 +50,6 @@ class RegisterViewModel : ViewModel() {
 sealed class RegisterUiState {
     object Initial : RegisterUiState()
     object Loading : RegisterUiState()
-    object Success : RegisterUiState()
+    data class Success(val emailVerificationSent: Boolean = false) : RegisterUiState()
     data class Error(val message: String) : RegisterUiState()
 } 

@@ -53,14 +53,17 @@ fun NavGraph(startDestination: String = "splash") {
         }
 
         // Pantalla principal (home)
-        composable("home") {
-            HomeScreen(
-                onLogout = {
-                    navController.navigate("login") {
-                        popUpTo("home") { inclusive = true }
+            composable("home") {
+                HomeScreen(
+                    navController = navController, // ✅ Se pasa el NavController
+                    onLogout = {
+                        navController.navigate("login") {
+                            popUpTo("home") { inclusive = true }
+                        }
                     }
-                }
-            )
+                )
+            }
+
         }
     }
-}
+

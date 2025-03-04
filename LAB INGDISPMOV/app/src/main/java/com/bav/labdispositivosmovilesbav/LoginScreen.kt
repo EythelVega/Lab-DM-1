@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -46,7 +47,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "Iniciar Sesión",
+            text = stringResource(R.string.login),
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(vertical = 32.dp)
         )
@@ -54,11 +55,11 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Correo electrónico") },
+            label = { Text(stringResource(R.string.email)) },
             leadingIcon = { 
                 Icon(
                     imageVector = Icons.Default.Email,
-                    contentDescription = "Email Icon"
+                    contentDescription = stringResource(R.string.email)
                 )
             },
             modifier = Modifier.fillMaxWidth(),
@@ -74,11 +75,11 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Contraseña") },
+            label = { Text(stringResource(R.string.password)) },
             leadingIcon = { 
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = "Password Icon"
+                    contentDescription = stringResource(R.string.password)
                 )
             },
             trailingIcon = {
@@ -102,23 +103,13 @@ fun LoginScreen(
 
         Button(
             onClick = { viewModel.login(email, password) },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = email.isNotEmpty() && password.isNotEmpty() && uiState !is LoginUiState.Loading
+            modifier = Modifier.fillMaxWidth()
         ) {
-            if (uiState is LoginUiState.Loading) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(24.dp)
-                )
-            } else {
-                Text("Iniciar Sesión")
-            }
+            Text(stringResource(R.string.login))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         TextButton(onClick = onGoToRegister) {
-            Text("¿No tienes cuenta? Regístrate")
+            Text(stringResource(R.string.no_account))
         }
 
         if (uiState is LoginUiState.Error) {

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.compose.runtime:runtime-android:1.6.1@aar" external-system-id="GRADLE">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/8.10.2/transforms/743616f6af065a63a04db89c3c8f0d3b/transformed/runtime-release/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/8.10.2/transforms/743616f6af065a63a04db89c3c8f0d3b/transformed/runtime-release/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/8.10.2/transforms/743616f6af065a63a04db89c3c8f0d3b/transformed/runtime-release/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-android/1.6.1/95a9aee0d3377108287442563267db64712686c0/runtime-android-1.6.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LAB Mobile Devices BAV</string>
+    <string name="welcome">Welcome!</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="name">Name</string>
+    <string name="change_language">Change Language</string>
+    <string name="language_es">Spanish</string>
+    <string name="language_en">English</string>
+    <string name="logout">Logout</string>
+    <string name="no_account">Don\'t have an account? Register</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
+    <string name="registration_success">Registration successful</string>
+    <string name="passwords_dont_match">Passwords don\'t match</string>
+    <string name="registration_error">Registration error</string>
+</resources> 

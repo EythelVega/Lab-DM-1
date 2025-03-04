@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LAB INGDISPMOV</string>
+    <string name="welcome">¡Bienvenido!</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="register">Registrarse</string>
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="name">Nombre</string>
+    <string name="change_language">Cambiar Idioma</string>
+    <string name="language">Idioma</string>
+    <string name="language_es">Español</string>
+    <string name="language_en">English</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="no_account">¿No tienes cuenta? Regístrate</string>
+    <string name="show_password">Mostrar contraseña</string>
+    <string name="hide_password">Ocultar contraseña</string>
+    <string name="registration_success">Registro exitoso</string>
+    <string name="passwords_dont_match">Las contraseñas no coinciden</string>
+    <string name="registration_error">Error en el registro</string>
+    <string name="logout_confirmation_title">Confirmar cierre de sesión</string>
+    <string name="logout_confirmation_message">¿Estás seguro que deseas cerrar sesión?</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+</resources> 

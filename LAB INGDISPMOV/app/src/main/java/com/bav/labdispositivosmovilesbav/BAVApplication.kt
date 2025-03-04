@@ -9,9 +9,10 @@ class BAVApplication : Application() {
         super.onCreate()
         try {
             FirebaseApp.initializeApp(this)
-            Log.d("BAVApplication", "Firebase initialized successfully")
+            LanguageManager.setLocale(this, "es") // Idioma predeterminado
+            Log.d("BAVApplication", "Firebase y configuración de idioma inicializados correctamente")
         } catch (e: Exception) {
-            Log.e("BAVApplication", "Error initializing Firebase: ${e.message}")
+            Log.e("BAVApplication", "Error en la inicialización: ${e.message}")
             e.printStackTrace()
         }
     }

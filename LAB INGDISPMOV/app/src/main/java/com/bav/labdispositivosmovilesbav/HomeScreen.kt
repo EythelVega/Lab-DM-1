@@ -11,8 +11,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.bav.labdispositivosmovilesbav.components.LanguageSelector
+import com.bav.labdispositivosmovilesbav.components.LogoutDialog
+import com.bav.labdispositivosmovilesbav.R
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -20,13 +25,29 @@ fun HomeScreen(
     navController: NavController,
     onLogout: () -> Unit
 ) {
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    
+    if (showLogoutDialog) {
+        LogoutDialog(
+            onConfirm = {
+                showLogoutDialog = false
+                onLogout()
+            },
+            onDismiss = { showLogoutDialog = false }
+        )
+    }
+    
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mensajes") },
+                title = { Text(stringResource(R.string.app_name)) },
                 actions = {
-                    IconButton(onClick = onLogout) {
-                        Icon(Icons.Default.ExitToApp, contentDescription = "Cerrar sesión")
+                    LanguageSelector()
+                    IconButton(onClick = { showLogoutDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.ExitToApp,
+                            contentDescription = stringResource(R.string.logout)
+                        )
                     }
                 }
             )
@@ -39,7 +60,17 @@ fun HomeScreen(
             }
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(R.string.welcome),
+                style = MaterialTheme.typography.headlineLarge
+            )
             ChatList(navController)
         }
     }

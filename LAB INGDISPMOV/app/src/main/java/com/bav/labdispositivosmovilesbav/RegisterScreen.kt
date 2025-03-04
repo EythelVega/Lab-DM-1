@@ -1,5 +1,5 @@
 package com.bav.labdispositivosmovilesbav
-// Importaciones necesarias para que funcione el registro
+
 import android.util.Log
 import android.util.Patterns
 import androidx.compose.animation.AnimatedVisibility
@@ -31,8 +31,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -48,37 +50,43 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bav.labdispositivosmovilesbav.R
 import com.bav.labdispositivosmovilesbav.auth.RegisterUiState
 import com.bav.labdispositivosmovilesbav.auth.RegisterViewModel
+import com.bav.labdispositivosmovilesbav.ui.theme.Typography
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun RegisterScreen(
-    viewModel: RegisterViewModel = viewModel(), // Maneja la lógica del registro
-    onRegisterSuccess: () -> Unit  // Maneja el éxito del registro
+    viewModel: RegisterViewModel = viewModel(),
+    onRegisterSuccess: () -> Unit
 ) {
-// Para almacenar los datos del usuraio
-    var confirmPassword by remember { mutableStateOf("") }
-    var passwordsMatch by remember { mutableStateOf(true) } // Controla si las contraseñas coinciden
-
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) } // Para alternar la vista de la contraseña
-    var showError by remember { mutableStateOf<String?>(null) } // Mensaje de error en caso de fallo
+    var confirmPassword by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
+    var passwordsMatch by remember { mutableStateOf(true) }
+    var showError by remember { mutableStateOf<String?>(null) }
+    val focusManager = LocalFocusManager.current
 
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState) {
         when (uiState) {
             is RegisterUiState.Success -> {
-                Log.d("RegisterScreen", "Navegando a pantalla de éxito")
                 onRegisterSuccess()
                 viewModel.resetState()
             }
@@ -91,15 +99,14 @@ fun RegisterScreen(
         }
     }
 
-// Contenedor principal
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF1A237E), // Azul oscuro
-                        Color(0xFF0D47A1)  // Azul más claro
+                        Color(0xFF1A237E),
+                        Color(0xFF0D47A1)
                     )
                 )
             )
@@ -111,285 +118,145 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-// Texto del encabezado
             Text(
-                text = "Registro",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
+                text = stringResource(R.string.register),
+                style = MaterialTheme.typography.headlineLarge,
                 color = Color.White,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.15f)
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text(stringResource(R.string.name)) },
+                leadingIcon = { 
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = stringResource(R.string.name)
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = Color.White,
+                    focusedTextColor = Color.White,
+                    unfocusedLabelColor = Color.White,
+                    focusedLabelColor = Color.White,
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
+                    focusedBorderColor = Color.White
                 )
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text(stringResource(R.string.email)) },
+                leadingIcon = { 
+                    Icon(
+                        imageVector = Icons.Default.Email,
+                        contentDescription = stringResource(R.string.email)
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = Color.White,
+                    focusedTextColor = Color.White,
+                    unfocusedLabelColor = Color.White,
+                    focusedLabelColor = Color.White,
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
+                    focusedBorderColor = Color.White
+                )
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(stringResource(R.string.password)) },
+                leadingIcon = { 
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = stringResource(R.string.password)
+                    )
+                },
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            contentDescription = if (passwordVisible) stringResource(R.string.hide_password) else stringResource(R.string.show_password)
+                        )
+                    }
+                },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = Color.White,
+                    focusedTextColor = Color.White,
+                    unfocusedLabelColor = Color.White,
+                    focusedLabelColor = Color.White,
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
+                    focusedBorderColor = Color.White
+                )
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { 
+                    confirmPassword = it
+                    passwordsMatch = password == confirmPassword
+                },
+                label = { Text(stringResource(R.string.confirm_password)) },
+                leadingIcon = { 
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = stringResource(R.string.confirm_password)
+                    )
+                },
+                trailingIcon = {
+                    IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                        Icon(
+                            imageVector = if (confirmPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            contentDescription = if (confirmPasswordVisible) stringResource(R.string.hide_password) else stringResource(R.string.show_password)
+                        )
+                    }
+                },
+                visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                isError = !passwordsMatch,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = Color.White,
+                    focusedTextColor = Color.White,
+                    unfocusedLabelColor = Color.White,
+                    focusedLabelColor = Color.White,
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
+                    focusedBorderColor = Color.White
+                )
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = { 
+                    if (passwordsMatch) {
+                        viewModel.register(name, email, password)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = passwordsMatch && password.isNotEmpty() && email.isNotEmpty() && name.isNotEmpty()
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Campo Nombre
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("Nombre", color = Color.White) },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Person,
-                                contentDescription = "Nombre",
-                                tint = Color.White
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp),
-                        enabled = uiState !is RegisterUiState.Loading,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.White,
-                            unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
-                        )
-                    )
-
-                    // Campo Email
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        label = { Text("Correo electrónico", color = Color.White) },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Email,
-                                contentDescription = "Email",
-                                tint = Color.White
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp),
-                        enabled = uiState !is RegisterUiState.Loading,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.White,
-                            unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
-                        )
-                    )
-
-                    // Campo Contraseña
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        label = { Text("Contraseña", color = Color.White) },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Lock,
-                                contentDescription = "Password",
-                                tint = Color.White
-                            )
-                        },
-
-                        trailingIcon = {
-                            IconButton(
-                                onClick = { passwordVisible = !passwordVisible }
-                            ) {
-                                Icon(
-                                    imageVector = if (passwordVisible)
-                                        Icons.Default.VisibilityOff
-                                    else
-                                        Icons.Default.Visibility,
-                                    contentDescription = if (passwordVisible)
-                                        "Ocultar contraseña"
-                                    else
-                                        "Mostrar contraseña",
-                                    tint = Color.White
-                                )
-                            }
-                        },
-
-
-
-
-                        visualTransformation = if (passwordVisible)
-                            VisualTransformation.None
-                        else
-                            PasswordVisualTransformation(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        enabled = uiState !is RegisterUiState.Loading,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.White,
-                            unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
-                        )
-                    )
-                    OutlinedTextField(
-                        value = confirmPassword,
-                        onValueChange = {
-                            confirmPassword = it
-                            passwordsMatch = (password == it) // Usa 'it' para comparar con 'password'
-                        },
-                        label = { Text("Confirmar Contraseña", color = Color.White) },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Lock,
-                                contentDescription = "Confirmar contraseña",
-                                tint = Color.White
-                            )
-                        },
-                        trailingIcon = {
-                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                                Icon(
-                                    imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                    contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña",
-                                    tint = Color.White
-                                )
-                            }
-                        },
-                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        enabled = uiState !is RegisterUiState.Loading,
-                        isError = !passwordsMatch, // Resalta el campo si no coinciden
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.White,
-                            unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
-                        )
-                    )
-                    if (!passwordsMatch) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 16.dp) // Separa del botón de registro
-                                .border(1.dp, Color.Red, shape = RoundedCornerShape(8.dp)) // Borde rojo sutil
-                                .background(Color(0xFFFFEBEE), shape = RoundedCornerShape(8.dp)) // Fondo rosado claro
-                                .padding(12.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.ErrorOutline, // Ícono menos agresivo
-                                    contentDescription = "Error",
-                                    tint = Color.Red,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Las contraseñas no coinciden. Inténtalo de nuevo.",
-                                    color = Color(0xFFD32F2F), // Rojo elegante
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-                        }
-                    }
-
-
-// Muestra mensaje de error si no coinciden
-
-                    /*Button(
-                        onClick = {
-                            Log.d("RegisterScreen", "Iniciando registro con email: $email")
-                            viewModel.register(name, email, password)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
-                        enabled = name.isNotBlank() &&
-                                email.isNotBlank() &&
-                                password.isNotBlank() &&
-                                confirmPassword.isNotBlank() &&
-                                passwordsMatch &&
-                                uiState !is RegisterUiState.Loading,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF2196F3),
-                            disabledContainerColor = Color.Gray
-                        ),
-                        shape = RoundedCornerShape(25.dp)
-                    ) {
-                        if (uiState is RegisterUiState.Loading) {
-                            CircularProgressIndicator(
-                                color = Color.White,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        } else {
-                            Text("REGISTRARSE", fontSize = 16.sp)
-                        }
-                    }
-                    */
-                    // Botón de Registro
-                    Button(
-                        onClick = {
-                            if (password != confirmPassword) {
-                                passwordsMatch = false // Actualiza el estado para marcar error
-                            } else {
-                                passwordsMatch = true
-                                Log.d("RegisterScreen", "Iniciando registro con email: $email")
-                                viewModel.register(name, email, password)
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
-                        enabled = name.isNotBlank() &&
-                                email.isNotBlank() &&
-                                password.isNotBlank() &&
-                                confirmPassword.isNotBlank() &&
-                                passwordsMatch && // Se debe cumplir que las contraseñas coincidan
-                                uiState !is RegisterUiState.Loading,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF2196F3),
-                            disabledContainerColor = Color.Gray
-                        ),
-                        shape = RoundedCornerShape(25.dp)
-                    ) {
-                        if (uiState is RegisterUiState.Loading) {
-                            CircularProgressIndicator(
-                                color = Color.White,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        } else {
-                            Text("REGISTRARSE", fontSize = 16.sp)
-                        }
-                    }
-                }
+                Text(stringResource(R.string.register))
             }
 
-            // Mostrar errores
-            AnimatedVisibility(
-                visible = showError != null,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                showError?.let { error ->
-                    Card(
-                        modifier = Modifier
-                            .padding(top = 16.dp)
-                            .fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.Red.copy(alpha = 0.8f)
-                        )
-                    ) {
-                        Text(
-                            text = error,
-                            color = Color.White,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
+            if (showError != null) {
+                Text(
+                    text = showError!!,
+                    color = Color.Red,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
             }
         }
     }

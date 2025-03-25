@@ -14,19 +14,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.bav.labdispositivosmovilesbav.components.LanguageSelector
 import com.bav.labdispositivosmovilesbav.components.LogoutDialog
 import com.bav.labdispositivosmovilesbav.R
-import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
+    userRole: String, // Se agrega el rol como parámetro
     onLogout: () -> Unit
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
-    
+
     if (showLogoutDialog) {
         LogoutDialog(
             onConfirm = {
@@ -36,7 +38,7 @@ fun HomeScreen(
             onDismiss = { showLogoutDialog = false }
         )
     }
-    
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -53,10 +55,12 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navController.navigate("new_chat")
-            }) {
-                Icon(Icons.Default.Add, contentDescription = "Nuevo chat")
+            if (userRole == "Administrador") { // Botón flotante exclusivo para administradores
+                FloatingActionButton(onClick = {
+                    navController.navigate("new_chat")
+                }) {
+                    Icon(Icons.Default.Add, contentDescription = "Nuevo chat")
+                }
             }
         }
     ) { padding ->
@@ -71,6 +75,22 @@ fun HomeScreen(
                 text = stringResource(R.string.welcome),
                 style = MaterialTheme.typography.headlineLarge
             )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (userRole == "Administrador") {
+                // Opciones exclusivas para administradores
+                Button(onClick = {
+                    navController.navigate("configuracion") // Navegar a configuración
+                }) {
+                    Text("Ir a Configuración")
+                }
+                Text("Eres un administrador.")
+            } else {
+                // Opciones para usuarios estándar
+                Text("Eres un usuario estándar y no tienes permisos administrativos.")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
             ChatList(navController)
         }
     }
@@ -100,4 +120,14 @@ fun ChatItem(name: String, onClick: () -> Unit) {
     ) {
         Text(text = name, style = MaterialTheme.typography.bodyLarge)
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewHomeScreen() {
+    HomeScreen(
+        navController = rememberNavController(),
+        userRole = "Administrador", // Para probar como administrador
+        onLogout = {}
+    )
 }

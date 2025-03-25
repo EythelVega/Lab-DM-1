@@ -129,7 +129,7 @@ fun RegisterScreen(
                 value = name,
                 onValueChange = { name = it },
                 label = { Text(stringResource(R.string.name)) },
-                leadingIcon = { 
+                leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = stringResource(R.string.name)
@@ -152,7 +152,7 @@ fun RegisterScreen(
                 value = email,
                 onValueChange = { email = it },
                 label = { Text(stringResource(R.string.email)) },
-                leadingIcon = { 
+                leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
                         contentDescription = stringResource(R.string.email)
@@ -175,7 +175,7 @@ fun RegisterScreen(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text(stringResource(R.string.password)) },
-                leadingIcon = { 
+                leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
                         contentDescription = stringResource(R.string.password)
@@ -205,12 +205,12 @@ fun RegisterScreen(
 
             OutlinedTextField(
                 value = confirmPassword,
-                onValueChange = { 
+                onValueChange = {
                     confirmPassword = it
                     passwordsMatch = password == confirmPassword
                 },
                 label = { Text(stringResource(R.string.confirm_password)) },
-                leadingIcon = { 
+                leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
                         contentDescription = stringResource(R.string.confirm_password)
@@ -240,7 +240,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { 
+                onClick = {
                     if (passwordsMatch) {
                         viewModel.register(name, email, password)
                     }

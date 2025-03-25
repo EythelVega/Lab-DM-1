@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun NavGraph(startDestination: String = "splash") {
+fun NavGraph(startDestination: String = "splash", userRole: String) {
     val navController = rememberNavController()
 
     NavHost(
@@ -15,14 +15,14 @@ fun NavGraph(startDestination: String = "splash") {
     ) {
         // Pantalla de carga inicial
         composable("splash") {
-            SplashScreen(navController)  // Pantalla de carga inicial
+            SplashScreen(navController)
         }
 
         // Pantalla de inicio/login
         composable("login") {
             LoginScreen(
                 onLoginSuccess = {
-                    navController.navigate("home") { // Ir a la pantalla principal o inicio
+                    navController.navigate("home") {
                         popUpTo("login") { inclusive = true }
                     }
                 },
@@ -53,17 +53,26 @@ fun NavGraph(startDestination: String = "splash") {
         }
 
         // Pantalla principal (home)
-            composable("home") {
-                HomeScreen(
-                    navController = navController, // ✅ Se pasa el NavController
-                    onLogout = {
-                        navController.navigate("login") {
-                            popUpTo("home") { inclusive = true }
-                        }
+        composable("home") {
+            HomeScreen(
+                navController = navController,
+                userRole = userRole, // ✅ Pasamos el rol al HomeScreen
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
                     }
+                }
+            )
+        }
+
+        // Pantalla de configuración (solo para administradores)
+        if (userRole == "Administrador") {
+            composable("configuracion") {
+                ConfiguracionScreen(
+                    userRole = userRole,
+                    navController = navController // Si necesitas navegación en la pantalla
                 )
             }
-
         }
     }
-
+}

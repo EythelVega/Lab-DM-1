@@ -1,4 +1,4 @@
-package com.bav.labdispositivosmovilesbav
+package com.bav.labdispositivosmovilesbav.screens
 
 import android.util.Log
 import android.util.Patterns
@@ -69,8 +69,9 @@ import com.bav.labdispositivosmovilesbav.ui.theme.Typography
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
-    viewModel: RegisterViewModel = viewModel(),
-    onRegisterSuccess: () -> Unit
+    onRegisterSuccess: () -> Unit,
+    onNavigateBack: () -> Unit,
+    viewModel: RegisterViewModel = viewModel()
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }

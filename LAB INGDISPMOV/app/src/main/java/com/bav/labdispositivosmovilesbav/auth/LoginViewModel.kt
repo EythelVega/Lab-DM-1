@@ -21,6 +21,9 @@ class LoginViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Initial)
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
+    private val _userRole = MutableStateFlow("Usuario")
+    val userRole: StateFlow<String> = _userRole.asStateFlow()
+
     fun login(email: String, password: String) {
         viewModelScope.launch {
             try {
@@ -29,8 +32,9 @@ class LoginViewModel : ViewModel() {
                 
                 val result = authRepository.loginUser(email, password)
                 result.fold(
-                    onSuccess = { 
-                        Log.d("LoginViewModel", "Login exitoso")
+                    onSuccess = { (user, role) -> 
+                        Log.d("LoginViewModel", "Login exitoso con rol: $role")
+                        _userRole.value = role
                         _uiState.value = LoginUiState.Success 
                     },
                     onFailure = { 
@@ -47,5 +51,12 @@ class LoginViewModel : ViewModel() {
 
     fun resetState() {
         _uiState.value = LoginUiState.Initial
+    }
+
+    fun updateUserRole(role: String) {
+        viewModelScope.launch {
+            _userRole.value = role.trim()
+            Log.d("LoginViewModel", "Rol actualizado a: ${_userRole.value}")
+        }
     }
 } 

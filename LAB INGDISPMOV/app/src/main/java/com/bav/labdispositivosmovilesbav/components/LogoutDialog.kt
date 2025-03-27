@@ -14,16 +14,16 @@ fun LogoutDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.logout_confirmation_title)) },
-        text = { Text(stringResource(R.string.logout_confirmation_message)) },
+        title = { Text(stringResource(R.string.logout_confirmation)) },
+        text = { Text(stringResource(R.string.logout_message)) },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(stringResource(R.string.confirm))
+                Text(stringResource(R.string.yes))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.cancel))
+                Text(stringResource(R.string.no))
             }
         }
     )

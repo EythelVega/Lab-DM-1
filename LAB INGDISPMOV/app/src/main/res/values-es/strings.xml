@@ -12,14 +12,14 @@
     <string name="language">Idioma</string>
     <string name="language_es">Español</string>
     <string name="language_en">English</string>
-    <string name="logout">Cerrar Sesión</string>
+    <string name="logout">Cerrar sesión</string>
     <string name="no_account">¿No tienes cuenta? Regístrate</string>
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
     <string name="registration_success">Registro exitoso</string>
     <string name="passwords_dont_match">Las contraseñas no coinciden</string>
     <string name="registration_error">Error en el registro</string>
-    <string name="logout_confirmation_title">Confirmar cierre de sesión</string>
+    <string name="logout_confirmation_title">Cerrar sesión</string>
     <string name="logout_confirmation_message">¿Estás seguro que deseas cerrar sesión?</string>
     <string name="confirm">Confirmar</string>
     <string name="cancel">Cancelar</string>

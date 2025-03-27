@@ -44,12 +44,12 @@ class AuthRepository {
                     // Continuamos con el registro aunque falle el envío del correo
                 }
 
-                // Guardar información adicional en Firestore
+                // Guardar información adicional del usuario en Firestore
                 val userInfo = hashMapOf(
                     "name" to name,
                     "email" to email,
-                    "emailVerified" to false,
-                    "userRole" to "Usuario" // Agregar el rol predeterminado
+                    "userRole" to "Usuario", // o el rol que corresponda
+                    "createdAt" to System.currentTimeMillis()
                 )
 
                 try {
@@ -63,7 +63,7 @@ class AuthRepository {
                     Log.e("AuthRepository", "Error al guardar en Firestore: ${e.message}")
                     Result.failure(e)
                 }
-            } ?: Result.failure(Exception("Error: Usuario no creado"))
+            } ?: Result.failure(Exception("Error: Usuario no encontrado"))
 
         } catch (e: Exception) {
             Log.e("AuthRepository", "Error en el registro: ${e.message}")
@@ -97,8 +97,7 @@ class AuthRepository {
 
                 // Recuperar el rol del usuario desde Firestore
                 val userDoc = firestore.collection("users").document(user.uid).get().await()
-                val userRole = userDoc.getString("userRole")
-                    ?: "Usuario" // Asignar "Usuario" por defecto si no existe
+                val userRole = userDoc.getString("userRole") ?: "Usuario"
                 Log.d("AuthRepository", "Inicio de sesión exitoso: ${user.uid}, Rol: $userRole")
 
                 Result.success(Pair(user, userRole)) // Devolver el usuario y su rol

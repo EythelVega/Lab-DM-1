@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bav.labdispositivosmovilesbav.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,10 +23,31 @@ fun HomeScreen(
     userRole: String,
     onLogout: () -> Unit
 ) {
-    val isAdmin = remember(userRole) { userRole.trim() == "Administrador" }
+    var currentRole by remember { mutableStateOf(userRole) }
     var showLogoutDialog by remember { mutableStateOf(false) }
     
-    Log.d("HomeScreen", "Iniciando HomeScreen con rol: $userRole, isAdmin: $isAdmin")
+    LaunchedEffect(Unit) {
+        try {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            if (userId != null) {
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userId)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        val actualRole = document.getString("userRole") ?: "Usuario"
+                        if (actualRole != currentRole) {
+                            currentRole = actualRole
+                            Log.d("HomeScreen", "Rol actualizado: $actualRole")
+                        }
+                    }
+            }
+        } catch (e: Exception) {
+            Log.e("HomeScreen", "Error en LaunchedEffect: ${e.message}")
+        }
+    }
+
+    Log.d("HomeScreen", "Iniciando HomeScreen con rol: $userRole, isAdmin: ${userRole.trim() == "Administrador"}")
 
     // Dialog de confirmación
     if (showLogoutDialog) {
@@ -63,7 +85,7 @@ fun HomeScreen(
                 title = { 
                     Text(
                         text = stringResource(
-                            if (isAdmin) R.string.welcome_admin
+                            if (userRole.trim() == "Administrador") R.string.welcome_admin
                             else R.string.welcome_user
                         )
                     )
@@ -91,7 +113,7 @@ fun HomeScreen(
             // Añadir un texto para mostrar el rol actual (para debug)
             Text("Rol actual: $userRole")
             
-            if (isAdmin) {
+            if (userRole.trim() == "Administrador") {
                 Log.d("HomeScreen", "Renderizando botones de administrador")
                 // Botones de Administrador
                 Button(

@@ -91,28 +91,16 @@ class AuthRepository {
             val authResult = auth.signInWithEmailAndPassword(email, password).await()
 
             authResult.user?.let { user ->
-                if (!user.isEmailVerified) {
-                    return Result.failure(Exception("Por favor verifica tu correo electrónico antes de iniciar sesión"))
-                }
-
                 // Recuperar el rol del usuario desde Firestore
                 val userDoc = firestore.collection("users").document(user.uid).get().await()
                 val userRole = userDoc.getString("userRole") ?: "Usuario"
                 Log.d("AuthRepository", "Inicio de sesión exitoso: ${user.uid}, Rol: $userRole")
 
-                Result.success(Pair(user, userRole)) // Devolver el usuario y su rol
+                Result.success(Pair(user, userRole))
             } ?: Result.failure(Exception("Error: Usuario no encontrado"))
         } catch (e: Exception) {
             Log.e("AuthRepository", "Error en inicio de sesión: ${e.message}")
-            when {
-                e.message?.contains("INVALID_LOGIN_CREDENTIALS") == true ->
-                    Result.failure(Exception("Correo o contraseña incorrectos"))
-
-                e.message?.contains("INVALID_EMAIL") == true ->
-                    Result.failure(Exception("El formato del correo electrónico no es válido"))
-
-                else -> Result.failure(Exception("Error en el inicio de sesión: ${e.message}"))
-            }
+            Result.failure(Exception("Error en el inicio de sesión: ${e.message}"))
         }
     }
 }

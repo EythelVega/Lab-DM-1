@@ -26,10 +26,8 @@ class LoginViewModel : ViewModel() {
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
+            _uiState.value = LoginUiState.Loading
             try {
-                _uiState.value = LoginUiState.Loading
-                Log.d("LoginViewModel", "Iniciando proceso de login")
-                
                 val result = authRepository.loginUser(email, password)
                 result.fold(
                     onSuccess = { (user, role) -> 
@@ -38,8 +36,8 @@ class LoginViewModel : ViewModel() {
                         _uiState.value = LoginUiState.Success 
                     },
                     onFailure = { 
-                        Log.e("LoginViewModel", "Error en login: ${it.message}")
-                        _uiState.value = LoginUiState.Error(it.message ?: "Error desconocido") 
+                        Log.e("LoginViewModel", "Error en el login: ${it.message}")
+                        _uiState.value = LoginUiState.Error(it.message ?: "Error desconocido")
                     }
                 )
             } catch (e: Exception) {

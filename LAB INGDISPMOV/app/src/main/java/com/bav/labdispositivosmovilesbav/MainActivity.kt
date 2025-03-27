@@ -28,10 +28,13 @@ import android.content.Context
 import android.content.res.Configuration
 import kotlinx.coroutines.runBlocking
 import java.util.*
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 class MainActivity : ComponentActivity() {
-    private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseFirestore
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
     private var userRole = mutableStateOf("")
 
     override fun attachBaseContext(newBase: Context) {
@@ -59,10 +62,6 @@ class MainActivity : ComponentActivity() {
             checkGooglePlayServices()
             
             // Inicializar Firebase
-            auth = FirebaseAuth.getInstance()
-            db = FirebaseFirestore.getInstance()
-
-            // Configurar el manejo de cambios de idioma
             val userPreferencesRepository = UserPreferencesRepository(this)
             
             setupContent()
@@ -85,35 +84,40 @@ class MainActivity : ComponentActivity() {
     private fun setupContent() {
         setContent {
             val navController = rememberNavController()
-            var currentUserRole by remember { userRole }
+            var userRole = remember { mutableStateOf("Usuario") }
+            val coroutineScope = rememberCoroutineScope()
             
-            // Observar cambios en el usuario actual
-            LaunchedEffect(auth.currentUser) {
-                val currentUser = auth.currentUser
-                if (currentUser != null) {
-                    try {
-                        val userDoc = db.collection("users")
-                            .document(currentUser.uid)
-                            .get()
-                            .await()
-                        val role = userDoc.getString("userRole") ?: "Usuario"
-                        Log.d("MainActivity", "Rol obtenido en MainActivity: $role")
-                        currentUserRole = role
-                        Log.d("MainActivity", "Rol actualizado en MainActivity: $currentUserRole")
-                    } catch (e: Exception) {
-                        Log.e("MainActivity", "Error obteniendo rol: ${e.message}")
-                        currentUserRole = "Usuario"
+            DisposableEffect(auth.currentUser) {
+                val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+                    firebaseAuth.currentUser?.let { user ->
+                        coroutineScope.launch {
+                            try {
+                                val document = db.collection("users")
+                                    .document(user.uid)
+                                    .get()
+                                    .await()
+                                
+                                val role = document.getString("userRole") ?: "Usuario"
+                                userRole.value = role
+                                Log.d("MainActivity", "Rol actualizado: $role")
+                            } catch (e: Exception) {
+                                Log.e("MainActivity", "Error obteniendo rol: ${e.message}")
+                                userRole.value = "Usuario"
+                            }
+                        }
+                    } ?: run {
+                        userRole.value = "Usuario"
                     }
-                } else {
-                    currentUserRole = ""
                 }
+                
+                auth.addAuthStateListener(listener)
+                onDispose { auth.removeAuthStateListener(listener) }
             }
 
             LABDispositivosMovilesBAVTheme {
-                Log.d("MainActivity", "Pasando rol a NavGraph: $currentUserRole")
                 NavGraph(
                     navController = navController,
-                    userRole = currentUserRole
+                    userRole = userRole.value
                 )
             }
         }

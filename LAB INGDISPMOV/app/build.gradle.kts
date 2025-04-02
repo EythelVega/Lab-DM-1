@@ -106,6 +106,8 @@ dependencies {
     val compose_version = "1.5.4"
     implementation("androidx.compose.runtime:runtime:$compose_version")
     implementation("androidx.compose.runtime:runtime-livedata:$compose_version")
+
+    implementation ("com.google.accompanist:accompanist-permissions:0.28.0")
 }
 
 buildscript {

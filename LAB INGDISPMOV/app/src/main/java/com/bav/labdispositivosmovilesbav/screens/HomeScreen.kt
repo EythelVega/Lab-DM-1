@@ -127,19 +127,44 @@ fun HomeScreen(
 
             if (showCameraAndAudioToast) {
                 Toast.makeText(navController.context, "Cámara y micrófono activados", Toast.LENGTH_SHORT).show()
-            }
+                if (showCameraAndAudioToast) {
+                    Toast.makeText(navController.context, "Cámara y micrófono activados", Toast.LENGTH_SHORT).show()
+                }
 
-            // Renderiza botones según el rol
-            if (userRole.trim() == "Administrador") {
-                Button(onClick = { navController.navigate("configuracion") }) {
-                    Text(stringResource(R.string.settings))
+                // Renderiza botones según el rol
+                if (userRole.trim() == "Administrador") {
+                    Button(onClick = { navController.navigate("configuracion") }) {
+                        Text(stringResource(R.string.settings))
+                    }
+                    Button(onClick = { navController.navigate("users") }) {
+                        Text(stringResource(R.string.manage_users))
+                    }
+                } else {
+                    Button(onClick = { navController.navigate("users") }) {
+                        Text(stringResource(R.string.chat))
+                    }
                 }
-                Button(onClick = { navController.navigate("users") }) {
-                    Text(stringResource(R.string.manage_users))
+
+                // Navegar a VideoCallScreen con un nombre de canal (ejemplo canal123)
+                Button(onClick = {
+                    val channelName = "canal123"  // Nombre del canal, puede ser dinámico según la lógica de tu app
+                    navController.navigate("video_call/$channelName")
+                }) {
+                    Text("Iniciar videollamada")
                 }
-            } else {
-                Button(onClick = { navController.navigate("users") }) {
-                    Text(stringResource(R.string.chat))
+
+                // Renderiza botones según el rol
+                if (userRole.trim() == "Administrador") {
+                    Button(onClick = { navController.navigate("configuracion") }) {
+                        Text(stringResource(R.string.settings))
+                    }
+                    Button(onClick = { navController.navigate("users") }) {
+                        Text(stringResource(R.string.manage_users))
+                    }
+                } else {
+                    Button(onClick = { navController.navigate("users") }) {
+                        Text(stringResource(R.string.chat))
+                    }
                 }
             }
         }

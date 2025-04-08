@@ -9,17 +9,26 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.bav.labdispositivosmovilesbav.screens.*
+import com.bav.labdispositivosmovilesbav.screens.ChatScreen
+import com.bav.labdispositivosmovilesbav.screens.ConfiguracionScreen
+import com.bav.labdispositivosmovilesbav.screens.HomeScreen
+import com.bav.labdispositivosmovilesbav.screens.LoginScreen
+import com.bav.labdispositivosmovilesbav.screens.RegisterScreen
+import com.bav.labdispositivosmovilesbav.screens.SplashScreen
+import com.bav.labdispositivosmovilesbav.screens.UserListScreen
+import com.bav.labdispositivosmovilesbav.screens.VideoCallScreen
 import com.bav.labdispositivosmovilesbav.viewmodels.ChatViewModel
 import com.google.firebase.auth.FirebaseAuth
+import io.agora.rtc.RtcEngine
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    userRole: String
+    userRole: String,
+    rtcEngine: RtcEngine // Recibimos el RtcEngine desde MainActivity
 ) {
     Log.d("NavGraph", "Recibiendo userRole: $userRole")
-    
+
     NavHost(
         navController = navController,
         startDestination = "splash"
@@ -37,7 +46,7 @@ fun NavGraph(
 
         composable("login") {
             LoginScreen(
-                onLoginSuccess = { 
+                onLoginSuccess = {
                     navController.navigate("home") {
                         popUpTo(0) { inclusive = true }
                     }
@@ -114,9 +123,32 @@ fun NavGraph(
             } else {
                 // Redirigir a home si no es administrador
                 LaunchedEffect(Unit) {
-                    navController.navigate("home")
+                    navController.navigate("home") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
+        }
+
+        // Ruta para la pantalla de video llamada, solo si el rol es adecuado
+        composable("video_call/{channelName}") { backStackEntry ->
+            val channelName = backStackEntry.arguments?.getString("channelName") ?: ""
+            Log.d("NavGraph", "Canal de videollamada: $channelName")
+
+            if (userRole == "Administrador" || userRole == "Usuario") {
+                // Aquí pasamos el RtcEngine a la pantalla de videollamada
+                VideoCallScreen(
+                    rtcEngine = rtcEngine,  // Ahora se pasa la instancia de RtcEngine
+                    channelName = channelName
+                )
+            } else {
+                // Si no tiene el rol adecuado, redirigir a home
+                LaunchedEffect(Unit) {
+                    navController.navigate("home") {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             }
         }
     }
-} 
+}

@@ -1,41 +1,38 @@
 package com.bav.labdispositivosmovilesbav
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.runtime.*
-import androidx.navigation.compose.rememberNavController
-import com.bav.labdispositivosmovilesbav.navigation.NavGraph
-import com.bav.labdispositivosmovilesbav.ui.theme.LABDispositivosMovilesBAVTheme
-import com.bav.labdispositivosmovilesbav.utils.LanguageManager
-import com.bav.labdispositivosmovilesbav.data.UserPreferencesRepository
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import android.util.Log
-import kotlinx.coroutines.launch
-import com.google.firebase.firestore.FirebaseFirestore
-import androidx.compose.runtime.mutableStateOf
-import com.google.firebase.FirebaseApp
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import kotlinx.coroutines.tasks.await
-import com.google.firebase.FirebaseOptions
-import androidx.compose.runtime.DisposableEffect
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.compose.rememberNavController
+import com.bav.labdispositivosmovilesbav.data.UserPreferencesRepository
+import com.bav.labdispositivosmovilesbav.navigation.NavGraph
+import com.bav.labdispositivosmovilesbav.ui.theme.LABDispositivosMovilesBAVTheme
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import io.agora.rtc.IRtcEngineEventHandler
+import io.agora.rtc.RtcEngine
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.util.*
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
     private var userRole = mutableStateOf("")
+
+    // Initialize RtcEngine variable
+    private lateinit var rtcEngine: RtcEngine
+    private val agoraAppId = "753cc0ad24584a4985b5b4b840fc6560" // Reemplázalo con tu App ID de Agora
 
     override fun attachBaseContext(newBase: Context) {
         try {
@@ -56,24 +53,43 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         try {
-            // Verificar Google Play Services
             checkGooglePlayServices()
-            
-            // Inicializar Firebase
-            val userPreferencesRepository = UserPreferencesRepository(this)
-            
-            setupContent()
+            initializeAgoraEngine()  // Initialize Agora RTC Engine
+            setupContent()  // Set up the UI content
         } catch (e: Exception) {
             Log.e("MainActivity", "Error en onCreate: ${e.message}")
         }
     }
+    private fun initializeAgoraEngine() {
+        try {
+            rtcEngine = RtcEngine.create(this, agoraAppId, object : IRtcEngineEventHandler() {
+                override fun onJoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
+                    Log.d("Agora", "Unido a canal: $channel con UID: $uid")
+                }
+
+                override fun onUserJoined(uid: Int, elapsed: Int) {
+                    Log.d("Agora", "Usuario unido: $uid")
+                }
+            })
+
+            rtcEngine.setLogFile(getExternalFilesDir(null)?.absolutePath + "/agora_rtc.log")
+            Log.d("Agora", "Agora RTC Engine inicializado correctamente")
+
+        } catch (e: Exception) {
+            Log.e("Agora", "Error al inicializar Agora RTC Engine: ${e.message}")
+        }
+    }
+
+
+
+
 
     private fun checkGooglePlayServices() {
         val googleApiAvailability = GoogleApiAvailability.getInstance()
         val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(this)
-        
+
         if (resultCode != ConnectionResult.SUCCESS) {
             if (googleApiAvailability.isUserResolvableError(resultCode)) {
                 googleApiAvailability.getErrorDialog(this, resultCode, 9000)?.show()
@@ -81,12 +97,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // Initialize Agora RTC Engine
+
+
+
+    // Set up UI content
     private fun setupContent() {
         setContent {
             val navController = rememberNavController()
             var userRole = remember { mutableStateOf("Usuario") }
             val coroutineScope = rememberCoroutineScope()
-            
+
             DisposableEffect(auth.currentUser) {
                 val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
                     firebaseAuth.currentUser?.let { user ->
@@ -96,7 +117,7 @@ class MainActivity : ComponentActivity() {
                                     .document(user.uid)
                                     .get()
                                     .await()
-                                
+
                                 val role = document.getString("userRole") ?: "Usuario"
                                 userRole.value = role
                                 Log.d("MainActivity", "Rol actualizado: $role")
@@ -109,7 +130,7 @@ class MainActivity : ComponentActivity() {
                         userRole.value = "Usuario"
                     }
                 }
-                
+
                 auth.addAuthStateListener(listener)
                 onDispose { auth.removeAuthStateListener(listener) }
             }
@@ -117,7 +138,8 @@ class MainActivity : ComponentActivity() {
             LABDispositivosMovilesBAVTheme {
                 NavGraph(
                     navController = navController,
-                    userRole = userRole.value
+                    userRole = userRole.value,
+                    rtcEngine = rtcEngine  // Pass the RtcEngine to NavGraph
                 )
             }
         }
@@ -125,10 +147,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         try {
+            RtcEngine.destroy()  // Properly destroy Agora RTC Engine
+            Log.d("Agora", "Agora RTC Engine destruido")
             super.onDestroy()
         } catch (e: Exception) {
             Log.e("MainActivity", "Error en onDestroy: ${e.message}")
         }
     }
 }
-

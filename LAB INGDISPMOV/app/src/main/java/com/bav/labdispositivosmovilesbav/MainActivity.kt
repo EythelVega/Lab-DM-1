@@ -40,13 +40,20 @@ class MainActivity : ComponentActivity() {
             val config = Configuration(newBase.resources.configuration)
             val locale = runBlocking {
                 val language = userPreferencesRepository.getLanguage()
-                Locale(language)
+                Log.d("MainActivity", "Configurando idioma: $language")
+                when (language) {
+                    "en" -> Locale.ENGLISH
+                    "es" -> Locale("es")
+                    "fr" -> Locale.FRENCH
+                    else -> Locale.getDefault()
+                }
             }
             config.setLocale(locale)
             val context = newBase.createConfigurationContext(config)
             super.attachBaseContext(context)
         } catch (e: Exception) {
             Log.e("MainActivity", "Error en attachBaseContext: ${e.message}")
+            e.printStackTrace()
             super.attachBaseContext(newBase)
         }
     }

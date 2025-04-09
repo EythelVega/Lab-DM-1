@@ -5,29 +5,25 @@ import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.VideoCall
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.bav.labdispositivosmovilesbav.R
@@ -41,7 +37,6 @@ fun HomeScreen(
     userRole: String,
     onLogout: () -> Unit
 ) {
-    var currentRole by remember { mutableStateOf(userRole) }
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showCameraAndAudioToast by remember { mutableStateOf(false) }
 
@@ -58,7 +53,6 @@ fun HomeScreen(
         }
     }
 
-    // Lógica del diálogo de cierre de sesión
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
@@ -91,12 +85,17 @@ fun HomeScreen(
                         text = stringResource(
                             if (userRole.trim() == "Administrador") R.string.welcome_admin
                             else R.string.welcome_user
-                        )
+                        ),
+                        fontWeight = FontWeight.Bold
                     )
                 },
                 actions = {
                     IconButton(onClick = { showLogoutDialog = true }) {
-                        Icon(imageVector = MaterialIcons.Default.ExitToApp, contentDescription = stringResource(R.string.logout))
+                        Icon(
+                            imageVector = MaterialIcons.Default.ExitToApp,
+                            contentDescription = stringResource(R.string.logout),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             )
@@ -105,65 +104,145 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Botón para solicitar permisos
-            Button(onClick = {
-                val cameraPermission = ContextCompat.checkSelfPermission(navController.context, Manifest.permission.CAMERA)
-                val audioPermission = ContextCompat.checkSelfPermission(navController.context, Manifest.permission.RECORD_AUDIO)
+            // Título de bienvenida
+            Text(
+                text = stringResource(
+                    if (userRole.trim() == "Administrador") R.string.welcome_message_admin
+                    else R.string.welcome_message_user
+                ),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
 
-                if (cameraPermission == PackageManager.PERMISSION_GRANTED && audioPermission == PackageManager.PERMISSION_GRANTED) {
-                    showCameraAndAudioToast = true
-                } else {
-                    permissionLauncher.launch(
-                        arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+            // Botón para solicitar permisos
+            ElevatedButton(
+                onClick = {
+                    val cameraPermission = ContextCompat.checkSelfPermission(navController.context, Manifest.permission.CAMERA)
+                    val audioPermission = ContextCompat.checkSelfPermission(navController.context, Manifest.permission.RECORD_AUDIO)
+
+                    if (cameraPermission == PackageManager.PERMISSION_GRANTED && audioPermission == PackageManager.PERMISSION_GRANTED) {
+                        showCameraAndAudioToast = true
+                    } else {
+                        permissionLauncher.launch(
+                            arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = MaterialIcons.Default.PlayArrow,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = if (userRole.trim() == "Administrador") 
+                            "¡Hola Administrador! Haz clic para comenzar"
+                        else 
+                            "¡Hola! Haz clic para comenzar"
                     )
                 }
-            }) {
-                Text("Unirse a sala")
             }
 
             if (showCameraAndAudioToast) {
                 Toast.makeText(navController.context, "Cámara y micrófono activados", Toast.LENGTH_SHORT).show()
-                if (showCameraAndAudioToast) {
-                    Toast.makeText(navController.context, "Cámara y micrófono activados", Toast.LENGTH_SHORT).show()
-                }
 
-                // Renderiza botones según el rol
+                // Botones según el rol
                 if (userRole.trim() == "Administrador") {
-                    Button(onClick = { navController.navigate("configuracion") }) {
-                        Text(stringResource(R.string.settings))
+                    // Botón de Configuración
+                    ElevatedButton(
+                        onClick = { navController.navigate("configuracion") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = MaterialIcons.Default.Settings,
+                                contentDescription = null
+                            )
+                            Text(stringResource(R.string.settings))
+                        }
                     }
-                    Button(onClick = { navController.navigate("users") }) {
-                        Text(stringResource(R.string.manage_users))
+
+                    // Botón de Gestión de Usuarios
+                    ElevatedButton(
+                        onClick = { navController.navigate("users") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = MaterialIcons.Default.Group,
+                                contentDescription = null
+                            )
+                            Text(stringResource(R.string.manage_users))
+                        }
                     }
                 } else {
-                    Button(onClick = { navController.navigate("users") }) {
-                        Text(stringResource(R.string.chat))
+                    // Botón de Chat para usuarios normales
+                    ElevatedButton(
+                        onClick = { navController.navigate("users") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = MaterialIcons.Default.Chat,
+                                contentDescription = null
+                            )
+                            Text(stringResource(R.string.chat))
+                        }
                     }
                 }
 
-                // Navegar a VideoCallScreen con un nombre de canal (ejemplo canal123)
-                Button(onClick = {
-                    val channelName = "canal123"  // Nombre del canal, puede ser dinámico según la lógica de tu app
-                    navController.navigate("video_call/$channelName")
-                }) {
-                    Text("Iniciar videollamada")
-                }
-
-                // Renderiza botones según el rol
-                if (userRole.trim() == "Administrador") {
-                    Button(onClick = { navController.navigate("configuracion") }) {
-                        Text(stringResource(R.string.settings))
-                    }
-                    Button(onClick = { navController.navigate("users") }) {
-                        Text(stringResource(R.string.manage_users))
-                    }
-                } else {
-                    Button(onClick = { navController.navigate("users") }) {
-                        Text(stringResource(R.string.chat))
+                // Botón de Videollamada
+                ElevatedButton(
+                    onClick = {
+                        val channelName = "canal123"
+                        navController.navigate("video_call/$channelName")
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = MaterialIcons.Default.VideoCall,
+                            contentDescription = null
+                        )
+                        Text("Iniciar videollamada")
                     }
                 }
             }

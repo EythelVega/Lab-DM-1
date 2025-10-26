@@ -107,9 +107,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime:$compose_version")
     implementation("androidx.compose.runtime:runtime-livedata:$compose_version")
 
-    implementation ("com.google.accompanist:accompanist-permissions:0.28.0")
-    implementation ("io.agora.rtc:full-sdk:3.7.0")  // La versión más reciente
-    implementation ("androidx.activity:activity-ktx:1.7.0" )// Para compatibilidad con activity result
+    implementation ("androidx.activity:activity-ktx:1.7.0")
 }
 
 buildscript {

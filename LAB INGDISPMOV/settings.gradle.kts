@@ -3,7 +3,6 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://repo.agora.io/repo/") }
     }
 }
 
@@ -12,7 +11,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://artifactory.agora.io/artifactory/libs-release") } // Repositorio correcto de Agora
     }
 }
 

@@ -89,11 +89,11 @@
     <string name="no">No</string>
     <string name="logout_confirmation">Cerrar sesión</string>
     <string name="logout_message">¿Estás seguro que deseas cerrar sesión?</string>
-    <string name="welcome_admin">Bienvenido Administrador</string>
-    <string name="welcome_user">Bienvenido Usuario</string>
-    <string name="welcome_message_admin">Panel de Administrador</string>
-    <string name="welcome_message_user">Panel de Usuario</string>
-    <string name="manage_users">Gestionar Usuarios</string>
+    <string name="welcome_admin">Bienvenido administrador</string>
+    <string name="welcome_user">Bienvenido usuario</string>
+    <string name="welcome_message_admin">Panel de administrador</string>
+    <string name="welcome_message_user">Panel de usuario</string>
+    <string name="manage_users">Gestionar usuarios</string>
     <string name="chat">Chat</string>
     <string name="register_prompt">¿No tienes cuenta? Regístrate</string>
 </resources>

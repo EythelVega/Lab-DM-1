@@ -1,34 +1,28 @@
 package com.bav.labdispositivosmovilesbav.screens
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.VideoCall
-import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.bav.labdispositivosmovilesbav.R
 import com.google.firebase.auth.FirebaseAuth
-import androidx.compose.material.icons.Icons as MaterialIcons
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,214 +32,339 @@ fun HomeScreen(
     onLogout: () -> Unit
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
-    var showCameraAndAudioToast by remember { mutableStateOf(false) }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
-        val audioGranted = permissions[Manifest.permission.RECORD_AUDIO] ?: false
-
-        if (cameraGranted && audioGranted) {
-            showCameraAndAudioToast = true
-        } else {
-            Toast.makeText(navController.context, "Permisos requeridos no concedidos", Toast.LENGTH_SHORT).show()
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = Color(0xFFF8F9FA),
+        topBar = {
+            HeaderBar(
+                onNotificationClick = { /* TODO */ },
+                onLogoutClick = { showLogoutDialog = true }
+            )
+        },
+        bottomBar = {
+            BottomNavigationBar()
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+        ) {
+            WelcomeSection(userRole)
+            
+            QuickAccessGrid(userRole)
         }
     }
 
     if (showLogoutDialog) {
-        AlertDialog(
-            onDismissRequest = { showLogoutDialog = false },
-            title = { Text(stringResource(R.string.logout_confirmation_title)) },
-            text = { Text(stringResource(R.string.logout_confirmation_message)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showLogoutDialog = false
-                        FirebaseAuth.getInstance().signOut()
-                        onLogout()
-                    }
-                ) {
-                    Text(stringResource(R.string.confirm))
-                }
+        LogoutDialog(
+            onConfirm = {
+                showLogoutDialog = false
+                FirebaseAuth.getInstance().signOut()
+                onLogout()
             },
-            dismissButton = {
-                TextButton(onClick = { showLogoutDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
+            onDismiss = { showLogoutDialog = false }
         )
     }
+}
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(
-                            if (userRole.trim() == "Administrador") R.string.welcome_admin
-                            else R.string.welcome_user
-                        ),
-                        fontWeight = FontWeight.Bold
+@Composable
+fun HeaderBar(
+    onNotificationClick: () -> Unit,
+    onLogoutClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color(0xFFFF6B35),
+                        Color(0xFF004E89)
                     )
-                },
-                actions = {
-                    IconButton(onClick = { showLogoutDialog = true }) {
-                        Icon(
-                            imageVector = MaterialIcons.Default.ExitToApp,
-                            contentDescription = stringResource(R.string.logout),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                )
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "LAB Dispositivos Móviles BAV",
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Título de bienvenida
-            Text(
-                text = stringResource(
-                    if (userRole.trim() == "Administrador") R.string.welcome_message_admin
-                    else R.string.welcome_message_user
-                ),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
-
-            // Botón para solicitar permisos
-            ElevatedButton(
-                onClick = {
-                    val cameraPermission = ContextCompat.checkSelfPermission(navController.context, Manifest.permission.CAMERA)
-                    val audioPermission = ContextCompat.checkSelfPermission(navController.context, Manifest.permission.RECORD_AUDIO)
-
-                    if (cameraPermission == PackageManager.PERMISSION_GRANTED && audioPermission == PackageManager.PERMISSION_GRANTED) {
-                        showCameraAndAudioToast = true
-                    } else {
-                        permissionLauncher.launch(
-                            arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-                        )
-                    }
-                },
+            Spacer(modifier = Modifier.width(48.dp))
+            
+            Spacer(modifier = Modifier.weight(1f))
+            
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(8.dp)
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopEnd
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                IconButton(onClick = onLogoutClick) {
                     Icon(
-                        imageVector = MaterialIcons.Default.PlayArrow,
-                        contentDescription = null
+                        imageVector = Icons.Default.ExitToApp,
+                        contentDescription = "Cerrar sesión",
+                        tint = Color.White
                     )
-                    Text(
-                        text = if (userRole.trim() == "Administrador") 
-                            "¡Hola Administrador! Haz clic para comenzar"
-                        else 
-                            "¡Hola! Haz clic para comenzar"
-                    )
-                }
-            }
-
-            if (showCameraAndAudioToast) {
-                Toast.makeText(navController.context, "Cámara y micrófono activados", Toast.LENGTH_SHORT).show()
-
-                // Botones según el rol
-                if (userRole.trim() == "Administrador") {
-                    // Botón de Configuración
-                    ElevatedButton(
-                        onClick = { navController.navigate("configuracion") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = MaterialIcons.Default.Settings,
-                                contentDescription = null
-                            )
-                            Text(stringResource(R.string.settings))
-                        }
-                    }
-
-                    // Botón de Gestión de Usuarios
-                    ElevatedButton(
-                        onClick = { navController.navigate("users") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = MaterialIcons.Default.Group,
-                                contentDescription = null
-                            )
-                            Text(stringResource(R.string.manage_users))
-                        }
-                    }
-                } else {
-                    // Botón de Chat para usuarios normales
-                    ElevatedButton(
-                        onClick = { navController.navigate("users") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = MaterialIcons.Default.Chat,
-                                contentDescription = null
-                            )
-                            Text(stringResource(R.string.chat))
-                        }
-                    }
-                }
-
-                // Botón de Videollamada
-                ElevatedButton(
-                    onClick = {
-                        val channelName = "canal123"
-                        navController.navigate("video_call/$channelName")
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = MaterialIcons.Default.VideoCall,
-                            contentDescription = null
-                        )
-                        Text("Iniciar videollamada")
-                    }
                 }
             }
         }
     }
+}
+
+@Composable
+fun WelcomeSection(userRole: String) {
+    // Animación flotante para el título
+    val infiniteTransition = rememberInfiniteTransition(label = "floating")
+    val translateY by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = -10f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "translateY"
+    )
+    
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF1A1A2E),
+                        Color(0xFF16213E)
+                    )
+                )
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.offset(y = translateY.dp)
+        ) {
+            Text(
+                text = if (userRole.trim() == "Administrador") {
+                    "¡Bienvenido administrador!"
+                } else {
+                    "¡Bienvenido otaku!"
+                },
+                color = Color(0xFFFFD700),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = if (userRole.trim() == "Administrador") {
+                    "Gestiona tu tienda con eficiencia"
+                } else {
+                    "Tu colección de ensueño te está esperando"
+                },
+                color = Color(0xFFF8F9FA),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+fun QuickAccessGrid(userRole: String) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(20.dp),
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+        modifier = Modifier.heightIn(max = 400.dp)
+    ) {
+        item {
+            QuickAccessCard(
+                title = "Ver Catálogo",
+                gradientColors = listOf(
+                    Color(0xFF7209B7),
+                    Color(0xFF004E89)
+                ),
+                icon = Icons.Default.Folder,
+                onClick = { /* TODO */ }
+            )
+        }
+        
+        item {
+            QuickAccessCard(
+                title = "Novedades",
+                gradientColors = listOf(
+                    Color(0xFFFF6B35),
+                    Color(0xFFFFD700)
+                ),
+                icon = Icons.Default.Star,
+                onClick = { /* TODO */ }
+            )
+        }
+        
+        item {
+            QuickAccessCard(
+                title = if (userRole.trim() == "Administrador") "Gestionar Usuarios" else "Síguenos",
+                gradientColors = listOf(
+                    Color(0xFF4267B2),
+                    Color(0xFF4267B2)
+                ),
+                icon = if (userRole.trim() == "Administrador") Icons.Default.People else Icons.Default.Favorite,
+                onClick = { /* TODO */ }
+            )
+        }
+        
+        item {
+            QuickAccessCard(
+                title = "Ajustes",
+                gradientColors = listOf(
+                    Color(0xFF718096),
+                    Color(0xFF718096)
+                ),
+                icon = Icons.Default.Settings,
+                onClick = { /* TODO */ }
+            )
+        }
+    }
+}
+
+@Composable
+fun QuickAccessCard(
+    title: String,
+    gradientColors: List<Color>,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit
+) {
+    var isPressed by remember { mutableStateOf(false) }
+    
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .scale(if (isPressed) 0.95f else 1f)
+            .clickable(
+                onClick = onClick,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isPressed) 2.dp else 8.dp,
+            pressedElevation = 2.dp
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.linearGradient(gradientColors)
+                )
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = title,
+                    tint = Color.White,
+                    modifier = Modifier.size(48.dp)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = title,
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BottomNavigationBar() {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shadowElevation = 8.dp,
+        color = Color(0xFFF8F9FA)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            NavItem(icon = Icons.Default.Home, isActive = true, label = "Home")
+            NavItem(icon = Icons.Default.Folder, isActive = false, label = "Catálogo")
+            NavItem(icon = Icons.Default.Notifications, isActive = false, label = "Notificaciones")
+            NavItem(icon = Icons.Default.Favorite, isActive = false, label = "Favoritos")
+            NavItem(icon = Icons.Default.Settings, isActive = false, label = "Ajustes")
+        }
+    }
+}
+
+@Composable
+fun NavItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    isActive: Boolean,
+    label: String
+) {
+    val backgroundColor = if (isActive) Color(0xFFFFE5D9) else Color.Transparent
+    val iconColor = if (isActive) Color(0xFFFF6B35) else Color(0xFF718096)
+    val iconSize = if (isActive) 28.dp else 24.dp
+
+    Box(
+        modifier = Modifier
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(20.dp)
+            )
+            .padding(8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = iconColor,
+            modifier = Modifier.size(iconSize)
+        )
+    }
+}
+
+@Composable
+fun LogoutDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Cerrar sesión") },
+        text = { Text("¿Estás seguro que deseas cerrar sesión?") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Confirmar")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
 }

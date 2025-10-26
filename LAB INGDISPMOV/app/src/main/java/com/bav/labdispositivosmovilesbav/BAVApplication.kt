@@ -3,8 +3,6 @@ package com.bav.labdispositivosmovilesbav
 import android.app.Application
 import android.util.Log
 import com.google.firebase.FirebaseApp
-import com.bav.labdispositivosmovilesbav.utils.LanguageManager
-import com.bav.labdispositivosmovilesbav.data.UserPreferencesRepository
 import com.google.firebase.FirebaseOptions
 
 class BAVApplication : Application() {
@@ -23,10 +21,6 @@ class BAVApplication : Application() {
                 FirebaseApp.initializeApp(this, options)
                 Log.d("BAVApplication", "Firebase inicializado correctamente")
             }
-
-            // Inicializar otros componentes
-            val userPreferencesRepository = UserPreferencesRepository(this)
-            LanguageManager.setLocale(this, "es")
             
         } catch (e: Exception) {
             Log.e("BAVApplication", "Error inicializando Firebase: ${e.message}")

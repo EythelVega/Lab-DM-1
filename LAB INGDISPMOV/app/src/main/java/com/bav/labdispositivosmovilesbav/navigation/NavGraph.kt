@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.bav.labdispositivosmovilesbav.screens.CatalogScreen
+import com.bav.labdispositivosmovilesbav.screens.FacebookScreen
 import com.bav.labdispositivosmovilesbav.screens.HomeScreen
 import com.bav.labdispositivosmovilesbav.screens.LoginScreen
 import com.bav.labdispositivosmovilesbav.screens.ManageProductsScreen
@@ -91,6 +92,10 @@ fun NavGraph(
             ManageProductsScreen(
                 navController = navController
             )
+        }
+        
+        composable("facebook") {
+            FacebookScreen(navController = navController)
         }
     }
 }

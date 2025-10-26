@@ -2,6 +2,7 @@ package com.bav.labdispositivosmovilesbav.screens
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -43,7 +44,7 @@ fun HomeScreen(
             )
         },
         bottomBar = {
-            BottomNavigationBar()
+            BottomNavigationBar(navController = navController)
         }
     ) { paddingValues ->
         Column(
@@ -215,13 +216,13 @@ fun QuickAccessGrid(userRole: String, navController: NavController) {
         
         item {
             QuickAccessCard(
-                title = if (userRole.trim() == "Administrador") "Gestionar Usuarios" else "Síguenos",
+                title = if (userRole.trim() == "Administrador") "Facebook" else "Síguenos",
                 gradientColors = listOf(
                     Color(0xFF4267B2),
                     Color(0xFF4267B2)
                 ),
-                icon = if (userRole.trim() == "Administrador") Icons.Default.People else Icons.Default.Favorite,
-                onClick = { /* TODO */ }
+                icon = Icons.Default.Favorite,
+                onClick = { navController.navigate("facebook") }
             )
         }
         
@@ -297,7 +298,7 @@ fun QuickAccessCard(
 }
 
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(navController: NavController) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shadowElevation = 8.dp,
@@ -310,11 +311,36 @@ fun BottomNavigationBar() {
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            NavItem(icon = Icons.Default.Home, isActive = true, label = "Home")
-            NavItem(icon = Icons.Default.Folder, isActive = false, label = "Catálogo")
-            NavItem(icon = Icons.Default.Notifications, isActive = false, label = "Notificaciones")
-            NavItem(icon = Icons.Default.Favorite, isActive = false, label = "Favoritos")
-            NavItem(icon = Icons.Default.Settings, isActive = false, label = "Ajustes")
+            NavItem(
+                icon = Icons.Default.Home, 
+                isActive = true, 
+                label = "Home",
+                onClick = { /* Ya estamos en home */ }
+            )
+            NavItem(
+                icon = Icons.Default.Folder, 
+                isActive = false, 
+                label = "Catálogo",
+                onClick = { navController.navigate("catalog") }
+            )
+            NavItem(
+                icon = Icons.Default.Notifications, 
+                isActive = false, 
+                label = "Notificaciones",
+                onClick = { /* TODO: Pantalla de notificaciones */ }
+            )
+            NavItem(
+                icon = Icons.Default.Favorite, 
+                isActive = false, 
+                label = "Facebook",
+                onClick = { navController.navigate("facebook") }
+            )
+            NavItem(
+                icon = Icons.Default.Settings, 
+                isActive = false, 
+                label = "Ajustes",
+                onClick = { /* TODO: Pantalla de ajustes */ }
+            )
         }
     }
 }
@@ -323,7 +349,8 @@ fun BottomNavigationBar() {
 fun NavItem(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     isActive: Boolean,
-    label: String
+    label: String,
+    onClick: () -> Unit
 ) {
     val backgroundColor = if (isActive) Color(0xFFFFE5D9) else Color.Transparent
     val iconColor = if (isActive) Color(0xFFFF6B35) else Color(0xFF718096)
@@ -335,6 +362,7 @@ fun NavItem(
                 color = backgroundColor,
                 shape = RoundedCornerShape(20.dp)
             )
+            .clickable(onClick = onClick)
             .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {

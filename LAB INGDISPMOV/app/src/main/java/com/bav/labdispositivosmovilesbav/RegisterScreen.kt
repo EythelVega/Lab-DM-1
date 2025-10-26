@@ -106,8 +106,8 @@ fun RegisterScreen(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF1A237E),
-                        Color(0xFF0D47A1)
+                        Color(0xFF667eea),
+                        Color(0xFF764ba2)
                     )
                 )
             )
@@ -120,9 +120,18 @@ fun RegisterScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = stringResource(R.string.register),
+                text = "Kame House Laguna",
+                color = Color(0xFFFFD700),
                 style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            
+            Text(
+                text = stringResource(R.string.register),
+                style = MaterialTheme.typography.headlineMedium,
                 color = Color.White,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 

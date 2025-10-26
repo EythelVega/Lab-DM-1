@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">LAB Dispositivos Móviles BAV</string>
+    <string name="app_name">Kame House Laguna</string>
 
     <!-- Arrays para los idiomas disponibles -->
     <string-array name="language_codes">

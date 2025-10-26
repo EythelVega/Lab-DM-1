@@ -75,6 +75,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
@@ -108,6 +109,9 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:$compose_version")
 
     implementation ("androidx.activity:activity-ktx:1.7.0")
+    
+    // Coil para carga de imágenes
+    implementation("io.coil-kt:coil-compose:2.5.0")
 }
 
 buildscript {

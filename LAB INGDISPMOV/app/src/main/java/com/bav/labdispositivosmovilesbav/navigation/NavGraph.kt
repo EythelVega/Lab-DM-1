@@ -6,8 +6,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.bav.labdispositivosmovilesbav.screens.CatalogScreen
 import com.bav.labdispositivosmovilesbav.screens.HomeScreen
 import com.bav.labdispositivosmovilesbav.screens.LoginScreen
+import com.bav.labdispositivosmovilesbav.screens.ManageProductsScreen
 import com.bav.labdispositivosmovilesbav.screens.RegisterScreen
 import com.bav.labdispositivosmovilesbav.screens.SplashScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -75,6 +77,19 @@ fun NavGraph(
                         Log.e("NavGraph", "Error en logout: ${e.message}")
                     }
                 }
+            )
+        }
+        
+        composable("catalog") {
+            CatalogScreen(
+                navController = navController,
+                userRole = userRole
+            )
+        }
+        
+        composable("manage_products") {
+            ManageProductsScreen(
+                navController = navController
             )
         }
     }

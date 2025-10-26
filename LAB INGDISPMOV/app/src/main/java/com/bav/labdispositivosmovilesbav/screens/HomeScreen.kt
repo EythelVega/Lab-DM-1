@@ -54,7 +54,7 @@ fun HomeScreen(
         ) {
             WelcomeSection(userRole)
             
-            QuickAccessGrid(userRole)
+            QuickAccessGrid(userRole, navController)
         }
     }
 
@@ -89,12 +89,12 @@ fun HeaderBar(
             ),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "LAB Dispositivos Móviles BAV",
-            color = Color.White,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
+            Text(
+                text = "Kame House Laguna",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
         
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -181,7 +181,7 @@ fun WelcomeSection(userRole: String) {
 }
 
 @Composable
-fun QuickAccessGrid(userRole: String) {
+fun QuickAccessGrid(userRole: String, navController: NavController) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(20.dp),
@@ -197,7 +197,7 @@ fun QuickAccessGrid(userRole: String) {
                     Color(0xFF004E89)
                 ),
                 icon = Icons.Default.Folder,
-                onClick = { /* TODO */ }
+                onClick = { navController.navigate("catalog") }
             )
         }
         

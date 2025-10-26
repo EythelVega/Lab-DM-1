@@ -228,13 +228,13 @@ fun QuickAccessGrid(userRole: String, navController: NavController) {
         
         item {
             QuickAccessCard(
-                title = "Ajustes",
+                title = "Ayuda",
                 gradientColors = listOf(
-                    Color(0xFF718096),
-                    Color(0xFF718096)
+                    Color(0xFFE53E3E),
+                    Color(0xFFC53030)
                 ),
-                icon = Icons.Default.Settings,
-                onClick = { /* TODO */ }
+                icon = Icons.Default.Help,
+                onClick = { navController.navigate("help") }
             )
         }
     }
@@ -336,10 +336,10 @@ fun BottomNavigationBar(navController: NavController) {
                 onClick = { navController.navigate("facebook") }
             )
             NavItem(
-                icon = Icons.Default.Settings, 
+                icon = Icons.Default.Help, 
                 isActive = false, 
-                label = "Ajustes",
-                onClick = { /* TODO: Pantalla de ajustes */ }
+                label = "Ayuda",
+                onClick = { navController.navigate("help") }
             )
         }
     }

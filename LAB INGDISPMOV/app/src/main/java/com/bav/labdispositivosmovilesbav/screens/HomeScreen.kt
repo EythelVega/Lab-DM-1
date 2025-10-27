@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bav.labdispositivosmovilesbav.R
+import com.bav.labdispositivosmovilesbav.components.BottomNavigationBar
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +45,7 @@ fun HomeScreen(
             )
         },
         bottomBar = {
-            BottomNavigationBar(navController = navController)
+            BottomNavigationBar(navController = navController, currentRoute = "home", userRole = userRole)
         }
     ) { paddingValues ->
         Column(
@@ -204,13 +205,19 @@ fun QuickAccessGrid(userRole: String, navController: NavController) {
         
         item {
             QuickAccessCard(
-                title = "Novedades",
+                title = if (userRole.trim() == "Administrador") "Notificaciones" else "Notificaciones",
                 gradientColors = listOf(
                     Color(0xFFFF6B35),
                     Color(0xFFFFD700)
                 ),
-                icon = Icons.Default.Star,
-                onClick = { /* TODO */ }
+                icon = Icons.Default.Notifications,
+                onClick = { 
+                    if (userRole.trim() == "Administrador") {
+                        navController.navigate("manage_notifications")
+                    } else {
+                        navController.navigate("notifications")
+                    }
+                }
             )
         }
         
@@ -294,84 +301,6 @@ fun QuickAccessCard(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shadowElevation = 8.dp,
-        color = Color(0xFFF8F9FA)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            NavItem(
-                icon = Icons.Default.Home, 
-                isActive = true, 
-                label = "Home",
-                onClick = { /* Ya estamos en home */ }
-            )
-            NavItem(
-                icon = Icons.Default.Folder, 
-                isActive = false, 
-                label = "Catálogo",
-                onClick = { navController.navigate("catalog") }
-            )
-            NavItem(
-                icon = Icons.Default.Notifications, 
-                isActive = false, 
-                label = "Notificaciones",
-                onClick = { /* TODO: Pantalla de notificaciones */ }
-            )
-            NavItem(
-                icon = Icons.Default.Favorite, 
-                isActive = false, 
-                label = "Facebook",
-                onClick = { navController.navigate("facebook") }
-            )
-            NavItem(
-                icon = Icons.Default.Help, 
-                isActive = false, 
-                label = "Ayuda",
-                onClick = { navController.navigate("help") }
-            )
-        }
-    }
-}
-
-@Composable
-fun NavItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    isActive: Boolean,
-    label: String,
-    onClick: () -> Unit
-) {
-    val backgroundColor = if (isActive) Color(0xFFFFE5D9) else Color.Transparent
-    val iconColor = if (isActive) Color(0xFFFF6B35) else Color(0xFF718096)
-    val iconSize = if (isActive) 28.dp else 24.dp
-
-    Box(
-        modifier = Modifier
-            .background(
-                color = backgroundColor,
-                shape = RoundedCornerShape(20.dp)
-            )
-            .clickable(onClick = onClick)
-            .padding(8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = iconColor,
-            modifier = Modifier.size(iconSize)
-        )
     }
 }
 

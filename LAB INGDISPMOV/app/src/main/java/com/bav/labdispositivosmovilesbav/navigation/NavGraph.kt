@@ -11,7 +11,9 @@ import com.bav.labdispositivosmovilesbav.screens.FacebookScreen
 import com.bav.labdispositivosmovilesbav.screens.HelpScreen
 import com.bav.labdispositivosmovilesbav.screens.HomeScreen
 import com.bav.labdispositivosmovilesbav.screens.LoginScreen
+import com.bav.labdispositivosmovilesbav.screens.ManageNotificationsScreen
 import com.bav.labdispositivosmovilesbav.screens.ManageProductsScreen
+import com.bav.labdispositivosmovilesbav.screens.NotificationsScreen
 import com.bav.labdispositivosmovilesbav.screens.RegisterScreen
 import com.bav.labdispositivosmovilesbav.screens.SplashScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -101,6 +103,14 @@ fun NavGraph(
         
         composable("help") {
             HelpScreen(navController = navController)
+        }
+        
+        composable("notifications") {
+            NotificationsScreen(navController = navController)
+        }
+        
+        composable("manage_notifications") {
+            ManageNotificationsScreen(navController = navController)
         }
     }
 }

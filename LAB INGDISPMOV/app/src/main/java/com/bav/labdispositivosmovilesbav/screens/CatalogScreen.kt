@@ -19,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -98,7 +99,13 @@ fun CatalogScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(products) { product ->
-                    ProductCard(product)
+                    ProductCard(
+                        product = product,
+                        onProductClick = { productId ->
+                            // Navegar a detalle de producto
+                            navController.navigate("product_detail/$productId")
+                        }
+                    )
                 }
             }
         }
@@ -243,13 +250,13 @@ fun FilterChip(
 }
 
 @Composable
-fun ProductCard(product: Product) {
+fun ProductCard(product: Product, onProductClick: (String) -> Unit) {
     val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .clickable { /* TODO: Navegar a detalle */ },
+            .clickable { onProductClick(product.id) },
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, Color(0xFFE2E8F0)),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -347,15 +354,17 @@ fun ProductCard(product: Product) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF2D3748),
-                    maxLines = 2
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 
                 Text(
                     text = product.description,
                     fontSize = 14.sp,
                     color = Color(0xFF718096),
-                    maxLines = 3,  // Aumentado de 2 a 3 líneas
-                    lineHeight = 20.sp
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    lineHeight = 18.sp
                 )
             }
             

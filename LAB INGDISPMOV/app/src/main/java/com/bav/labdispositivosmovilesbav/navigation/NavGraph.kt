@@ -14,6 +14,7 @@ import com.bav.labdispositivosmovilesbav.screens.LoginScreen
 import com.bav.labdispositivosmovilesbav.screens.ManageNotificationsScreen
 import com.bav.labdispositivosmovilesbav.screens.ManageProductsScreen
 import com.bav.labdispositivosmovilesbav.screens.NotificationsScreen
+import com.bav.labdispositivosmovilesbav.screens.ProductDetailScreen
 import com.bav.labdispositivosmovilesbav.screens.RegisterScreen
 import com.bav.labdispositivosmovilesbav.screens.SplashScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -111,6 +112,14 @@ fun NavGraph(
         
         composable("manage_notifications") {
             ManageNotificationsScreen(navController = navController)
+        }
+        
+        composable("product_detail/{productId}") { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            ProductDetailScreen(
+                navController = navController,
+                productId = productId
+            )
         }
     }
 }

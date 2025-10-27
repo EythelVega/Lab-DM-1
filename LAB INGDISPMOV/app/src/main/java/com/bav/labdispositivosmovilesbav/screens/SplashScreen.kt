@@ -74,7 +74,7 @@ fun SplashScreen(
         ) {
             // Logo con animación flotante
             Image(
-                painter = painterResource(id = R.drawable.logo_kamehouse),
+                painter = painterResource(id = R.drawable.icon_kamehouse),
                 contentDescription = "Logo KameHouse Laguna",
                 modifier = Modifier
                     .size(300.dp)

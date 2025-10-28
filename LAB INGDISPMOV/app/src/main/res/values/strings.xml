@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Kame House Laguna</string>
 
-    <!-- Arrays para los idiomas disponibles -->
     <string-array name="language_codes">
         <item>es</item>
         <item>en</item>
@@ -15,78 +14,41 @@
         <item>Français</item>
     </string-array>
 
-    <!-- Español -->
-    <string name="welcome_es">Bienvenido</string>
-    <string name="logout_es">Cerrar Sesión</string>
-    <string name="change_language_es">Cambiar Idioma</string>
-    <string name="admin_role_es">Administrador</string>
-    <string name="user_role_es">Usuario</string>
-    <string name="settings_es">Configuración</string>
-    <string name="back_es">Volver</string>
-    <string name="confirm_logout_es">¿Desea cerrar sesión?</string>
-    <string name="yes_es">Sí</string>
-    <string name="no_es">No</string>
-
-    <!-- English -->
-    <string name="welcome_en">Welcome</string>
-    <string name="logout_en">Logout</string>
-    <string name="change_language_en">Change Language</string>
-    <string name="admin_role_en">Administrator</string>
-    <string name="user_role_en">User</string>
-    <string name="settings_en">Settings</string>
-    <string name="back_en">Back</string>
-    <string name="confirm_logout_en">Do you want to logout?</string>
-    <string name="yes_en">Yes</string>
-    <string name="no_en">No</string>
-
-    <!-- Français -->
-    <string name="welcome_fr">Bienvenue</string>
-    <string name="logout_fr">Déconnexion</string>
-    <string name="change_language_fr">Changer de Langue</string>
-    <string name="admin_role_fr">Administrateur</string>
-    <string name="user_role_fr">Utilisateur</string>
-    <string name="settings_fr">Paramètres</string>
-    <string name="back_fr">Retour</string>
-    <string name="confirm_logout_fr">Voulez-vous vous déconnecter?</string>
-    <string name="yes_fr">Oui</string>
-    <string name="no_fr">Non</string>
-
     <string name="welcome">Bienvenido</string>
-    <string name="login">Iniciar Sesión</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="change_language">Cambiar Idioma</string>
+    <string name="admin_role">Administrador</string>
+    <string name="user_role">Usuario</string>
+    <string name="settings">Configuración</string>
+    <string name="back">Volver</string>
+    <string name="confirm_logout">¿Desea cerrar sesión?</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+
+    <string name="language_fr">Français</string> <string name="registration_success">Registro exitoso</string> <string name="passwords_dont_match">Las contraseñas no coinciden</string> <string name="registration_error">Error en el registro</string> <string name="start_button_admin">¡Hola Administrador! Haz clic para comenzar</string> <string name="start_button_user">¡Hola! Haz clic para comenzar</string> <string name="start_video_call">Iniciar videollamada</string> <string name="camera_mic_permissions_denied">Permisos requeridos no concedidos</string> <string name="camera_mic_activated">Cámara y micrófono activados</string> <string name="login">Iniciar Sesión</string>
     <string name="register">Registrarse</string>
     <string name="email">Correo electrónico</string>
     <string name="password">Contraseña</string>
     <string name="confirm_password">Confirmar Contraseña</string>
     <string name="name">Nombre</string>
-    <string name="change_language">Cambiar Idioma</string>
     <string name="language_es">Español</string>
-    <string name="language_en">Inglés</string>
-    <string name="logout">Cerrar Sesión</string>
-    <string name="no_account">¿No tienes cuenta? Regístrate</string>
+    <string name="language_en">Inglés</string> <string name="no_account">¿No tienes cuenta? Regístrate</string>
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
     <string name="logout_confirmation_title">Cerrar sesión</string>
     <string name="logout_confirmation_message">¿Estás seguro que deseas cerrar sesión?</string>
     <string name="confirm">Confirmar</string>
     <string name="cancel">Cancelar</string>
-    <string name="language">Language</string>
-    <string name="login_title">Iniciar Sesión</string>
+    <string name="language">Language</string> <string name="login_title">Iniciar Sesión</string>
     <string name="login_email_label">Correo electrónico</string>
     <string name="login_password_label">Contraseña</string>
     <string name="login_button">Ingresar</string>
     <string name="register_link">¿No tienes cuenta? Regístrate</string>
     <string name="error_invalid_email">Correo electrónico inválido</string>
     <string name="error_invalid_password">La contraseña debe tener al menos 6 caracteres</string>
-    <string name="admin_role">Administrador</string>
-    <string name="user_role">Usuario</string>
-    <string name="settings">Configuración</string>
-    <string name="back">Volver</string>
     <string name="new_chat">Nuevo Chat</string>
     <string name="available_chats">Chats Disponibles</string>
     <string name="no_users">No hay usuarios disponibles</string>
-    <string name="confirm_logout">¿Desea cerrar sesión?</string>
-    <string name="yes">Sí</string>
-    <string name="no">No</string>
     <string name="logout_confirmation">Cerrar sesión</string>
     <string name="logout_message">¿Estás seguro que deseas cerrar sesión?</string>
     <string name="welcome_admin">Bienvenido administrador</string>
@@ -96,4 +58,5 @@
     <string name="manage_users">Gestionar usuarios</string>
     <string name="chat">Chat</string>
     <string name="register_prompt">¿No tienes cuenta? Regístrate</string>
+
 </resources>

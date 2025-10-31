@@ -107,16 +107,19 @@ fun ProductDetailScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(350.dp)
-                    .background(Color(0xFFF7FAFC))
+                    .height(420.dp)
+                    .background(Color(0xFFF7FAFC)),
+                contentAlignment = Alignment.Center
             ) {
                 when {
                     currentProduct.imageUrl.isNotEmpty() && currentProduct.imageUrl.startsWith("http") -> {
                         AsyncImage(
                             model = currentProduct.imageUrl,
                             contentDescription = currentProduct.name,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            contentScale = ContentScale.Fit
                         )
                     }
                     currentProduct.imageUrl.isNotEmpty() -> {
@@ -129,8 +132,10 @@ fun ProductDetailScreen(
                             androidx.compose.foundation.Image(
                                 painter = painterResource(id = drawableId),
                                 contentDescription = currentProduct.name,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp),
+                                contentScale = ContentScale.Fit
                             )
                         }
                     }
@@ -220,7 +225,10 @@ fun ProductDetailScreen(
                                     color = Color(0xFF2D3748)
                                 )
                                 Text(
-                                    "Producto disponible en tienda",
+                                    text = when (currentProduct.status) {
+                                        ProductStatus.EN_STOCK -> "Producto disponible en tienda"
+                                        ProductStatus.PROXIMAMENTE -> "Disponible próximamente - Llegará pronto"
+                                    },
                                     fontSize = 12.sp,
                                     color = Color(0xFF718096)
                                 )

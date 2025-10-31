@@ -69,7 +69,7 @@ fun SuccessScreen(
 
             // Mensaje de éxito
             Text(
-                text = "¡Registro Exitoso!\nPor favor, verifica tu correo electrónico para activar tu cuenta.",
+                text = "¡Registro exitoso!\nPor favor, verifica tu correo electrónico para activar tu cuenta.",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,

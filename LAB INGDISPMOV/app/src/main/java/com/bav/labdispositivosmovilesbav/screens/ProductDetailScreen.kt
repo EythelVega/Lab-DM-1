@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.bav.labdispositivosmovilesbav.components.BottomNavigationBar
 import com.models.Product
 import com.models.ProductStatus
 
@@ -30,7 +31,8 @@ import com.models.ProductStatus
 @Composable
 fun ProductDetailScreen(
     navController: NavController,
-    productId: String
+    productId: String,
+    userRole: String = "Usuario"
 ) {
     val context = LocalContext.current
     val repository = remember { com.bav.labdispositivosmovilesbav.repository.ProductRepository() }
@@ -90,6 +92,9 @@ fun ProductDetailScreen(
                         )
                     )
             )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController, currentRoute = "product_detail", userRole = userRole)
         }
     ) { paddingValues ->
         Column(
@@ -157,7 +162,7 @@ fun ProductDetailScreen(
                     ) {
                         Text(
                             text = when (currentProduct.status) {
-                                ProductStatus.EN_STOCK -> "✅ En Stock"
+                                ProductStatus.EN_STOCK -> "✅ En stock"
                                 ProductStatus.PROXIMAMENTE -> "⏳ Próximamente"
                             },
                             fontSize = 14.sp,

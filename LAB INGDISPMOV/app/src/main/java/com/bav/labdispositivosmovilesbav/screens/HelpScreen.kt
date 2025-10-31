@@ -26,12 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import androidx.navigation.NavController
+import com.bav.labdispositivosmovilesbav.components.BottomNavigationBar
 import java.io.File
 import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HelpScreen(navController: NavController) {
+fun HelpScreen(navController: NavController, userRole: String = "Usuario") {
     val context = LocalContext.current
     
     Scaffold(
@@ -59,6 +60,9 @@ fun HelpScreen(navController: NavController) {
                     containerColor = Color(0xFFE53E3E)
                 )
             )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController, currentRoute = "help", userRole = userRole)
         }
     ) { paddingValues ->
         Column(
@@ -105,7 +109,7 @@ fun HelpScreen(navController: NavController) {
                     }
                     
                     Text(
-                        text = "Centro de Ayuda",
+                        text = "Centro de ayuda",
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -186,7 +190,7 @@ fun HelpScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        "Descargar Manual de Usuario",
+                        "Descargar manual de usuario",
                         color = Color.White,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
@@ -204,7 +208,7 @@ fun HelpScreen(navController: NavController) {
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = "Contenido del Manual",
+                            text = "Contenido del manual",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF2D3748)

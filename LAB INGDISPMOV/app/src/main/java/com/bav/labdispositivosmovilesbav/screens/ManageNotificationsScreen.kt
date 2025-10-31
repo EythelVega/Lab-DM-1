@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManageNotificationsScreen(navController: NavController) {
+fun ManageNotificationsScreen(navController: NavController, userRole: String = "Administrador") {
     val repository = remember { NotificationRepository() }
     var notifications by remember { mutableStateOf<List<Notification>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -57,7 +57,7 @@ fun ManageNotificationsScreen(navController: NavController) {
                             modifier = Modifier.clickable { navController.navigateUp() }
                         )
                         Text(
-                            "Gestionar Notificaciones",
+                            "Gestionar notificaciones",
                             color = Color.White,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -65,7 +65,7 @@ fun ManageNotificationsScreen(navController: NavController) {
                 },
                 actions = {
                     IconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.Add, "Crear Notificación", tint = Color.White)
+                        Icon(Icons.Default.Add, "Crear notificación", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -80,7 +80,7 @@ fun ManageNotificationsScreen(navController: NavController) {
             )
         },
         bottomBar = {
-            BottomNavigationBar(navController, "manage_notifications", "Administrador")
+            BottomNavigationBar(navController, "manage_notifications", userRole)
         }
     ) { paddingValues ->
         if (isLoading) {
@@ -208,7 +208,7 @@ fun AddNotificationDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Crear Notificación") },
+        title = { Text("Crear notificación") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(

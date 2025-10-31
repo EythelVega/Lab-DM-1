@@ -21,10 +21,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.bav.labdispositivosmovilesbav.components.BottomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FacebookScreen(navController: NavController) {
+fun FacebookScreen(navController: NavController, userRole: String = "Usuario") {
     val context = LocalContext.current
     
     Scaffold(
@@ -52,6 +53,9 @@ fun FacebookScreen(navController: NavController) {
                     containerColor = Color(0xFF4267B2)
                 )
             )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController, currentRoute = "facebook", userRole = userRole)
         }
     ) { paddingValues ->
         Column(
@@ -215,7 +219,7 @@ fun FacebookScreen(navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        "Nuestra Comunidad",
+                        "Nuestra comunidad",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF2D3748)

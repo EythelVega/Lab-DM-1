@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.bav.labdispositivosmovilesbav.components.BottomNavigationBar
 import com.bav.labdispositivosmovilesbav.repository.ProductRepository
 import com.models.Product
 import com.models.ProductStatus
@@ -55,57 +56,69 @@ fun CatalogScreen(
         }
     }
     
-    Column(modifier = Modifier.fillMaxSize()) {
-        // Header con gradiente morado
-        HeaderBar(
-            title = "Catálogo de Figuras",
-            onBackClick = { navController.navigateUp() },
-            userRole = userRole,
-            onManageProducts = {
-                navController.navigate("manage_products")
-            }
-        )
-        
-        // Barra de filtros
-        FilterBar(
-            selectedFilter = selectedFilter,
-            onFilterSelected = { filter ->
-                selectedFilter = if (selectedFilter == filter) null else filter
-            }
-        )
-        
-        // Lista de productos
-        if (isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else if (products.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No hay productos disponibles",
-                    color = Color.Gray,
-                    fontSize = 16.sp
-                )
-            }
-        } else {
-            LazyColumn(
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(products) { product ->
-                    ProductCard(
-                        product = product,
-                        onProductClick = { productId ->
-                            // Navegar a detalle de producto
-                            navController.navigate("product_detail/$productId")
-                        }
+    Scaffold(
+        topBar = {
+            // Header con gradiente morado
+            HeaderBar(
+                title = "Catálogo de figuras",
+                onBackClick = { navController.navigateUp() },
+                userRole = userRole,
+                onManageProducts = {
+                    navController.navigate("manage_products")
+                }
+            )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController, currentRoute = "catalog", userRole = userRole)
+        }
+    ) { paddingValues ->
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Barra de filtros
+            FilterBar(
+                selectedFilter = selectedFilter,
+                onFilterSelected = { filter ->
+                    selectedFilter = if (selectedFilter == filter) null else filter
+                }
+            )
+            
+            // Lista de productos
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (products.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No hay productos disponibles",
+                        color = Color.Gray,
+                        fontSize = 16.sp
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.padding(paddingValues),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(products) { product ->
+                        ProductCard(
+                            product = product,
+                            onProductClick = { productId ->
+                                // Navegar a detalle de producto
+                                navController.navigate("product_detail/$productId")
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -208,7 +221,7 @@ fun FilterBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             FilterChip(
-                label = "En Stock",
+                label = "En stock",
                 status = ProductStatus.EN_STOCK,
                 isSelected = selectedFilter == ProductStatus.EN_STOCK,
                 onSelected = { onFilterSelected(ProductStatus.EN_STOCK) },
@@ -377,7 +390,7 @@ fun ProductCard(product: Product, onProductClick: (String) -> Unit) {
 @Composable
 fun StatusBadge(status: ProductStatus) {
     val (text, color) = when (status) {
-        ProductStatus.EN_STOCK -> "En Stock" to Color(0xFF38A169)
+        ProductStatus.EN_STOCK -> "En stock" to Color(0xFF38A169)
         ProductStatus.PROXIMAMENTE -> "Próximamente" to Color(0xFFC05621)
     }
     

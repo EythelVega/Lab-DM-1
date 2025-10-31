@@ -94,31 +94,33 @@ fun NavGraph(
         
         composable("manage_products") {
             ManageProductsScreen(
-                navController = navController
+                navController = navController,
+                userRole = userRole
             )
         }
         
         composable("facebook") {
-            FacebookScreen(navController = navController)
+            FacebookScreen(navController = navController, userRole = userRole)
         }
         
         composable("help") {
-            HelpScreen(navController = navController)
+            HelpScreen(navController = navController, userRole = userRole)
         }
         
         composable("notifications") {
-            NotificationsScreen(navController = navController)
+            NotificationsScreen(navController = navController, userRole = userRole)
         }
         
         composable("manage_notifications") {
-            ManageNotificationsScreen(navController = navController)
+            ManageNotificationsScreen(navController = navController, userRole = userRole)
         }
         
         composable("product_detail/{productId}") { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
             ProductDetailScreen(
                 navController = navController,
-                productId = productId
+                productId = productId,
+                userRole = userRole
             )
         }
     }

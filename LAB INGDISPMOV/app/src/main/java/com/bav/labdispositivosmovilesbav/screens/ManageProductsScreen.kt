@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.bav.labdispositivosmovilesbav.components.BottomNavigationBar
 import com.bav.labdispositivosmovilesbav.repository.ProductRepository
 import com.models.Product
 import com.models.ProductStatus
@@ -31,7 +32,8 @@ import java.io.InputStream
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageProductsScreen(
-    navController: NavController
+    navController: NavController,
+    userRole: String = "Administrador"
 ) {
     val repository = remember { ProductRepository() }
     var products by remember { mutableStateOf<List<Product>>(emptyList()) }
@@ -47,33 +49,41 @@ fun ManageProductsScreen(
         isLoading = false
     }
     
-    Column(modifier = Modifier.fillMaxSize()) {
-        // Header
-        TopAppBar(
-            title = { Text("Gestionar Productos") },
-            navigationIcon = {
-                IconButton(onClick = { navController.navigateUp() }) {
-                    Icon(Icons.Default.ArrowBack, "Volver")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Gestionar productos") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(Icons.Default.ArrowBack, "Volver")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { showAddDialog = true }) {
+                        Icon(Icons.Default.Add, "Agregar producto")
+                    }
                 }
-            },
-            actions = {
-                IconButton(onClick = { showAddDialog = true }) {
-                    Icon(Icons.Default.Add, "Agregar producto")
-                }
-            }
-        )
-        
+            )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController = navController, currentRoute = "manage_products", userRole = userRole)
+        }
+    ) { paddingValues ->
         // Lista de productos
         if (isLoading) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
             }
         } else if (products.isEmpty()) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -95,6 +105,7 @@ fun ManageProductsScreen(
             }
         } else {
             LazyColumn(
+                modifier = Modifier.padding(paddingValues),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -195,7 +206,7 @@ fun ProductManagementCard(
                 ) {
                     Text(
                         text = when (product.status) {
-                            ProductStatus.EN_STOCK -> "En Stock"
+                            ProductStatus.EN_STOCK -> "En stock"
                             ProductStatus.PROXIMAMENTE -> "Próximamente"
                         },
                         fontSize = 12.sp,
@@ -242,7 +253,7 @@ fun AddEditProductDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (product == null) "Agregar Producto" else "Editar Producto") },
+        title = { Text(if (product == null) "Agregar producto" else "Editar producto") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 // Selector de imagen
@@ -312,7 +323,7 @@ fun AddEditProductDialog(
                     FilterChip(
                         selected = status == ProductStatus.EN_STOCK,
                         onClick = { status = ProductStatus.EN_STOCK },
-                        label = { Text("En Stock") },
+                        label = { Text("En stock") },
                         modifier = Modifier.weight(1f)
                     )
                     FilterChip(

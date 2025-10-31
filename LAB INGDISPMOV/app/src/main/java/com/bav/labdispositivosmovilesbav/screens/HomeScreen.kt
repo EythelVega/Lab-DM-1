@@ -193,7 +193,7 @@ fun QuickAccessGrid(userRole: String, navController: NavController) {
     ) {
         item {
             QuickAccessCard(
-                title = "Ver Catálogo",
+                title = "Ver catálogo",
                 gradientColors = listOf(
                     Color(0xFF7209B7),
                     Color(0xFF004E89)

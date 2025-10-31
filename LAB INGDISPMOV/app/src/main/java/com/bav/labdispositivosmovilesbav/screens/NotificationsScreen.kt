@@ -34,7 +34,7 @@ import androidx.compose.foundation.shape.CircleShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationsScreen(navController: NavController) {
+fun NotificationsScreen(navController: NavController, userRole: String = "Usuario") {
     val repository = remember { NotificationRepository() }
     var notifications by remember { mutableStateOf<List<Notification>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -79,7 +79,7 @@ fun NotificationsScreen(navController: NavController) {
             )
         },
         bottomBar = {
-            BottomNavigationBar(navController, "notifications", "Usuario")
+            BottomNavigationBar(navController, "notifications", userRole)
         }
     ) { paddingValues ->
         if (isLoading) {

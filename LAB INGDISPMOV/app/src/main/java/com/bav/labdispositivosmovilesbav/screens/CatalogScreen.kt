@@ -56,31 +56,31 @@ fun CatalogScreen(
         }
     }
     
-    Scaffold(
-        topBar = {
-            // Header con gradiente morado
-            HeaderBar(
-                title = "Catálogo de figuras",
-                onBackClick = { navController.navigateUp() },
-                userRole = userRole,
-                onManageProducts = {
-                    navController.navigate("manage_products")
-                }
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(navController = navController, currentRoute = "catalog", userRole = userRole)
-        }
-    ) { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize()) {
-            // Barra de filtros
-            FilterBar(
-                selectedFilter = selectedFilter,
-                onFilterSelected = { filter ->
-                    selectedFilter = if (selectedFilter == filter) null else filter
-                }
-            )
-            
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Header con gradiente morado
+        HeaderBar(
+            title = "Catálogo de figuras",
+            onBackClick = { navController.navigateUp() },
+            userRole = userRole,
+            onManageProducts = {
+                navController.navigate("manage_products")
+            }
+        )
+        
+        // Barra de filtros (justo después del header)
+        FilterBar(
+            selectedFilter = selectedFilter,
+            onFilterSelected = { filter ->
+                selectedFilter = if (selectedFilter == filter) null else filter
+            }
+        )
+        
+        // Contenido con Scaffold para la barra inferior
+        Scaffold(
+            bottomBar = {
+                BottomNavigationBar(navController = navController, currentRoute = "catalog", userRole = userRole)
+            }
+        ) { paddingValues ->
             // Lista de productos
             if (isLoading) {
                 Box(
@@ -106,8 +106,13 @@ fun CatalogScreen(
                 }
             } else {
                 LazyColumn(
-                    modifier = Modifier.padding(paddingValues),
-                    contentPadding = PaddingValues(16.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        top = 16.dp,
+                        bottom = paddingValues.calculateBottomPadding() + 16.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    ),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(products) { product ->
